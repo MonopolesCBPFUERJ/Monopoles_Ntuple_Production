@@ -1,0 +1,3 @@
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_PhotonFusion_M-1000_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2830000/DB4C1CF8-0D67-F246-98E1-A9D674F1DACB.root
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_PhotonFusion_M-1000_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2830000/3A015E73-4929-4D45-B443-23122C7613B0.root
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_PhotonFusion_M-1000_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2830000/BE22CC0A-7F40-394F-8D40-52F667A7B336.root

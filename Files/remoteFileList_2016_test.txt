@@ -1,0 +1,2 @@
+file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-v2/2016-1000/RECO_2016_1000_1.root
+file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-v2/2016-1000/RECO_2016_1000_2.root

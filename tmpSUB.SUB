@@ -1,0 +1,15 @@
+universe = vanilla
+Executable = /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/submit.sh
++JobFlavour="workday"
++DesiredOD = SL7
+when_to_transfer_output = ON_EXIT
+transfer_input_files = /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/ntuple_mc_2018_cfg.py, /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/submit.sh
+Output =/afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/output/$(ClusterId)_log_job_$(Process).out
+Error  =/afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/errors/$(ClusterId)_log_job_$(Process).err
+Log    =/afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/stdout/$(ClusterId)_log_job_$(Process).log
+getenv=true
+RequestCpus = 4
+
+max_retries = 1
+Arguments  = $(remoteFILE) $(Process)
+Queue remoteFILE from Files/remoteFileList_2018_2000.txt

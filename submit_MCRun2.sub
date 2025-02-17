@@ -1,0 +1,20 @@
+executable = runMC_Run2.sh
+
+output = /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/output/$(ClusterId)_$(ProcId).out
+error  = /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/errors/$(ClusterId)_$(ProcId).err
+log    = /afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/condor/stdout/$(ClusterId)_$(ProcId).log
+
+environment = "X509_USER_PROXY=/afs/cern.ch/user/t/tmenezes/work/public/x509up_u81013"
+
++AppTainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"
+
++JobFlavour = "microcentury"
+
+getenv = True
+
+transfer_input_files = /afs/cern.ch/user/t/tmenezes/work/public/x509up_u81013,/afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/runMC_Run2.sh,/afs/cern.ch/user/t/tmenezes/work/public/CMSSW_10_6_23/src/files_list_2025.txt
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+queue arguments from files_list_2025.txt

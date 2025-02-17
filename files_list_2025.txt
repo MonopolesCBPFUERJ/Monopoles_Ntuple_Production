@@ -1,0 +1,4 @@
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2810000/6A3CBC4A-27D9-9E4C-BF3F-6603A7D333F3.root
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2810000/F14C1FB8-26D5-D342-9EE2-9F6D44B8A115.root
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2810000/9DF3D146-FD99-AB41-BB91-82747D85AD11.root
+/store/mc/RunIISummer20UL18RECO/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8/GEN-SIM-RECO/106X_upgrade2018_realistic_v11_L1v1-v2/2810000/AC1EEB5E-74D3-D04D-BF11-0536F3C9DDA0.root

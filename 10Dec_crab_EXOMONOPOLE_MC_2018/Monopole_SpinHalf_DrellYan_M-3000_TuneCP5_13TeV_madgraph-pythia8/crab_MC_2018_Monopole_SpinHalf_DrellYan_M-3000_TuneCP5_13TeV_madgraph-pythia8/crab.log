@@ -1,0 +1,174 @@
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 Running on: Linux lxplus824.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-10 16:54:41.338 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-10 16:54:41.339 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2024-12-10 16:54:41.364 UTC: 	 Checking credentials
+DEBUG 2024-12-10 16:54:41.364 UTC: 	 Found proxy file /tmp/x509up_u81013
+DEBUG 2024-12-10 16:54:41.364 UTC: 	 Making sure it has proper VOMS extension
+DEBUG 2024-12-10 16:54:41.364 UTC: 	 Executing command :
+ voms-proxy-info --vo --file /tmp/x509up_u81013
+DEBUG 2024-12-10 16:54:41.391 UTC: 	 output : cms
+
+ error: 
+ retcode : 0
+DEBUG 2024-12-10 16:54:41.391 UTC: 	 Getting proxy life time left
+DEBUG 2024-12-10 16:54:41.391 UTC: 	 Executing command :
+ voms-proxy-info --actimeleft --timeleft --file /tmp/x509up_u81013
+DEBUG 2024-12-10 16:54:41.417 UTC: 	 output : 43055
+43055
+
+ error: 
+ retcode : 0
+DEBUG 2024-12-10 16:54:41.417 UTC: 	 Proxy valid for 11:57:35 hours
+DEBUG 2024-12-10 16:54:41.417 UTC: 	 Encoded data for curl request: subresource=delegatedn
+DEBUG 2024-12-10 16:54:41.459 UTC: 	 Registering user credentials on myproxy for /DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(01|02).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-dev-tw(01|02|03|04).cern.ch|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=cmscrab/CN=(817881|373708)/CN=Robot: cms crab|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=crabint1/CN=373708/CN=Robot: CMS CRAB Integration 1
+DEBUG 2024-12-10 16:54:41.460 UTC: 	 Executing command :
+ voms-proxy-info --identity --file /tmp/x509up_u81013
+DEBUG 2024-12-10 16:54:41.487 UTC: 	 output : /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=tmenezes/CN=771981/CN=Thales Menezes De Oliveira
+
+ error: 
+ retcode : 0
+DEBUG 2024-12-10 16:54:41.487 UTC: 	 Getting myproxy life time left for 9489b1b63db17125bdfba9badf23c7e30acb4221
+DEBUG 2024-12-10 16:54:41.487 UTC: 	 Executing command :
+ myproxy-info -s myproxy.cern.ch -l 9489b1b63db17125bdfba9badf23c7e30acb4221
+DEBUG 2024-12-10 16:54:41.745 UTC: 	 output : username: 9489b1b63db17125bdfba9badf23c7e30acb4221
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=tmenezes/CN=771981/CN=Thales Menezes De Oliveira
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(01|02).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-dev-tw(01|02|03|04).cern.ch|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=cmscrab/CN=(817881|373708)/CN=Robot: cms crab|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=crabint1/CN=373708/CN=Robot: CMS CRAB Integration 1
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(01|02).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-dev-tw(01|02|03|04).cern.ch|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=cmscrab/CN=(817881|373708)/CN=Robot: cms crab|/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=crabint1/CN=373708/CN=Robot: CMS CRAB Integration 1
+  timeleft: 531:08:10  (22.1 days)
+
+ error: 
+ retcode : 0
+DEBUG 2024-12-10 16:54:41.745 UTC: 	 Myproxy is valid: 1912080
+DEBUG 2024-12-10 16:54:41.745 UTC: 	 Result of myproxy credential check:
+  Credential exists on myproxy: username: 9489b1b63db17125bdfba9badf23c7e30acb4221  - validity: 22 days, 3:08:00
+DEBUG 2024-12-10 16:54:41.745 UTC: 	 Command use: submit
+DEBUG 2024-12-10 16:54:41.745 UTC: 	 Options use: ['--config', <WMCore.Configuration.Configuration object at 0x7ffbef937110>]
+DEBUG 2024-12-10 16:54:41.746 UTC: 	 Encoded data for curl request: subresource=version
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 CRABClient version: v3.241125
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 Instance is prod
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 Server base url is cmsweb.cern.ch
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 Command api workflow
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 Started submission
+DEBUG 2024-12-10 16:54:41.790 UTC: 	 Working on /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8
+DEBUG 2024-12-10 16:54:41.792 UTC: 	 Encoded data for curl request: subresource=backendurls
+DEBUG 2024-12-10 16:54:41.835 UTC: 	 Loading required information from the environment
+DEBUG 2024-12-10 16:54:41.835 UTC: 	 Found CMSSW_10_6_23 for slc7_amd64_gcc700 with base /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23
+DEBUG 2024-12-10 16:54:41.835 UTC: 	 Loading required information from the environment
+DEBUG 2024-12-10 16:54:41.835 UTC: 	 Found CMSSW_10_6_23 for slc7_amd64_gcc700 with base /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23
+DEBUG 2024-12-10 16:54:41.835 UTC: 	 UNIQUE NAME: tarUUID 7b9a387e-c922-49d5-82e5-83135aa2d27b 
+DEBUG 2024-12-10 16:54:41.836 UTC: 	 self.config: from WMCore.Configuration import Configuration
+config = Configuration()
+config.section_('General')
+config.General.transferLogs = True
+config.General.transferOutputs = True
+config.General.workArea = '10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8'
+config.General.requestName = 'MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8'
+config.section_('JobType')
+config.JobType.psetName = 'ntuple_mc_2018_cfg_METFilter.py'
+config.JobType.pluginName = 'Analysis'
+config.JobType.outputFiles = ['output.root']
+config.JobType.allowUndistributedCMSSW = True
+config.section_('Data')
+config.Data.inputDataset = '/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO'
+config.Data.allowNonValidInputDataset = True
+config.Data.publication = True
+config.Data.unitsPerJob = 1
+config.Data.inputDBS = 'global'
+config.Data.splitting = 'FileBased'
+config.Data.outputDatasetTag = 'MC_2018'
+config.Data.outLFNDirBase = '/store/user/tmenezes/MagneticMonopole_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/'
+config.section_('Site')
+config.Site.storageSite = 'T3_CH_CERNBOX'
+
+DEBUG 2024-12-10 16:54:41.836 UTC: 	 self.config.JobType.psetName: ntuple_mc_2018_cfg_METFilter.py
+INFO 2024-12-10 16:54:41.836 UTC: 	 Importing CMSSW configuration ntuple_mc_2018_cfg_METFilter.py
+INFO 2024-12-10 16:54:41.836 UTC: 	 Finished importing CMSSW configuration ntuple_mc_2018_cfg_METFilter.py
+DEBUG 2024-12-10 16:54:41.836 UTC: 	 Writing CMSSW configuration to /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/PSet.py
+DEBUG 2024-12-10 16:54:43.664 UTC: 	 The following EDM output files will be collected: []
+DEBUG 2024-12-10 16:54:43.664 UTC: 	 The following TFile output files will be collected: []
+WARNING 2024-12-10 16:54:43.664 UTC: 	 The following user output files (not listed as PoolOuputModule or TFileService in the CMSSW PSet) will be collected: 'output.root'
+DEBUG 2024-12-10 16:54:43.664 UTC: 	 Loading required information from the environment
+DEBUG 2024-12-10 16:54:43.664 UTC: 	 Found CMSSW_10_6_23 for slc7_amd64_gcc700 with base /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23
+DEBUG 2024-12-10 16:54:43.664 UTC: 	 Making tarball in /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/7b9a387e-c922-49d5-82e5-83135aa2d27bdefault.tgz
+DEBUG 2024-12-10 16:54:43.666 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/bin
+DEBUG 2024-12-10 16:54:43.666 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/bin to tarball
+DEBUG 2024-12-10 16:54:43.667 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/python
+DEBUG 2024-12-10 16:54:43.667 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/python to tarball
+DEBUG 2024-12-10 16:54:43.678 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/cfipython
+DEBUG 2024-12-10 16:54:43.678 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/cfipython to tarball
+DEBUG 2024-12-10 16:54:43.679 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/lib
+DEBUG 2024-12-10 16:54:43.679 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/lib to tarball
+DEBUG 2024-12-10 16:54:43.734 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/biglib
+DEBUG 2024-12-10 16:54:43.734 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/biglib to tarball
+DEBUG 2024-12-10 16:54:43.735 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/module
+DEBUG 2024-12-10 16:54:43.735 UTC: 	 Checking directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/config/SCRAM/hooks
+DEBUG 2024-12-10 16:54:43.735 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/config/SCRAM/hooks to tarball
+DEBUG 2024-12-10 16:54:43.737 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/DeDxChecker/interface to tarball
+DEBUG 2024-12-10 16:54:43.738 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/MonoAlgorithms/interface to tarball
+DEBUG 2024-12-10 16:54:43.742 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/MonoAlgorithms/python to tarball
+DEBUG 2024-12-10 16:54:43.743 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/MonoAnalysis/python to tarball
+DEBUG 2024-12-10 16:54:43.745 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/MonoHack/python to tarball
+DEBUG 2024-12-10 16:54:43.746 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/TrackCombiner/interface to tarball
+DEBUG 2024-12-10 16:54:43.747 UTC: 	 Adding directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/Monopoles/TrackCombiner/python to tarball
+DEBUG 2024-12-10 16:54:44.630 UTC: 	 Uploading archive /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/7b9a387e-c922-49d5-82e5-83135aa2d27bdefault.tgz (1.356445.1 MB) to the CRAB cache. Using URI https://cmsweb.cern.ch/S3/crabcache_prod
+DEBUG 2024-12-10 16:54:45.016 UTC: 	 Encoded data for curl request: tarballname=77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz&subresource=upload&objecttype=sandbox
+DEBUG 2024-12-10 16:54:45.343 UTC: 	 sandbox 77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz is already in the S3 store, will not upload again
+DEBUG 2024-12-10 16:54:45.343 UTC: 	 Loading required information from the environment
+DEBUG 2024-12-10 16:54:45.343 UTC: 	 Found CMSSW_10_6_23 for slc7_amd64_gcc700 with base /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23
+DEBUG 2024-12-10 16:54:45.343 UTC: 	 Making tarball in /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/debugFiles.tgz
+DEBUG 2024-12-10 16:54:45.360 UTC: 	 Uploading archive /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/debugFiles.tgz (3 KB) to the CRAB cache. Using URI https://cmsweb.cern.ch/S3/crabcache_prod
+DEBUG 2024-12-10 16:54:45.362 UTC: 	 Encoded data for curl request: tarballname=d10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz&subresource=upload&objecttype=sandbox
+DEBUG 2024-12-10 16:54:45.504 UTC: 	 Will execute:
+curl -f -v -X POST  -H "User-Agent: CRAB" -F "key=tmenezes/sandboxes/d10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz" -F "AWSAccessKeyId=715203df6482458ba839e73e6dab634b" -F "policy=eyJleHBpcmF0aW9uIjogIjIwMjQtMTItMTBUMTc6NTQ6NDVaIiwgImNvbmRpdGlvbnMiOiBbeyJidWNrZXQiOiAiY3JhYmNhY2hlX3Byb2QifSwgeyJrZXkiOiAidG1lbmV6ZXMvc2FuZGJveGVzL2QxMGYxZTA3MWZjNWViYmEyNTE5YjRjYTI4NTNiMWM4Njk1N2EwNTkxMjc4ZDdlZGQ3YzM0ZmU0ZjdlNGQ5NTYudGFyLmd6In1dfQ==" -F "signature=Di3zFrqzP4QqYTHYF5gkW3JEFiM=" -F "file=@/afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/debugFiles.tgz" "https://s3.cern.ch/crabcache_prod"
+DEBUG 2024-12-10 16:54:46.544 UTC: 	 exitcode: 0
+stdout: 
+DEBUG 2024-12-10 16:54:46.544 UTC: 	 upload to S3 of sandbox /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/debugFiles.tgz completed
+DEBUG 2024-12-10 16:54:46.544 UTC: 	 make sure that object is ready for retrieve
+DEBUG 2024-12-10 16:54:47.544 UTC: 	 Encoded data for curl request: tarballname=d10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz&subresource=download&clientmethod=head_object&objecttype=sandbox
+DEBUG 2024-12-10 16:54:47.593 UTC: 	 PreSignedUrl to download sandbox received OK
+DEBUG 2024-12-10 16:54:47.599 UTC: 	 Will execute:
+ curl -v -s -f -o /dev/null --head  "https://s3.cern.ch/crabcache_prod/tmenezes/sandboxes/d10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz?AWSAccessKeyId=715203df6482458ba839e73e6dab634b&Signature=oatFl8l6uREMotKPuyLKjplb3Lg%3D&Expires=1733853287"
+DEBUG 2024-12-10 16:54:47.626 UTC: 	 exitcode: 0
+stdout: 
+DEBUG 2024-12-10 16:54:47.626 UTC: 	 sandbox /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/inputs/debugFiles.tgz successfully uploaded to S3
+DEBUG 2024-12-10 16:54:47.626 UTC: 	 Result uploading input files: 77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz 
+WARNING 2024-12-10 16:54:47.627 UTC: 	 Warning: The following output files will not be published, as they are not EDM files: ['output.root']
+DEBUG 2024-12-10 16:54:47.627 UTC: 	 submit() - self.configuration from WMCore.Configuration import Configuration
+config = Configuration()
+config.section_('General')
+config.General.transferLogs = True
+config.General.transferOutputs = True
+config.General.workArea = '10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8'
+config.General.requestName = 'MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8'
+config.section_('JobType')
+config.JobType.psetName = 'ntuple_mc_2018_cfg_METFilter.py'
+config.JobType.pluginName = 'Analysis'
+config.JobType.outputFiles = ['output.root']
+config.JobType.allowUndistributedCMSSW = True
+config.section_('Data')
+config.Data.inputDataset = '/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO'
+config.Data.allowNonValidInputDataset = True
+config.Data.publication = True
+config.Data.unitsPerJob = 1
+config.Data.inputDBS = 'global'
+config.Data.splitting = 'FileBased'
+config.Data.outputDatasetTag = 'MC_2018'
+config.Data.outLFNDirBase = '/store/user/tmenezes/MagneticMonopole_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/'
+config.section_('Site')
+config.Site.storageSite = 'T3_CH_CERNBOX'
+
+DEBUG 2024-12-10 16:54:47.627 UTC: 	 submit() - self.configreq {'maxjobruntime': 1250, 'extrajdl': [], 'lfn': '/store/user/tmenezes/MagneticMonopole_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/', 'savelogsflag': 1, 'useparent': 0, 'inputblocks': [], 'asyncdest': 'T3_CH_CERNBOX', 'algoargs': 1, 'numcores': 1, 'addoutputfiles': ['output.root'], 'generator': 'pythia', 'maxmemory': 2000, 'partialdataset': 0, 'publishdbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', 'priority': 10, 'userfiles': [], 'inputdata': '/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO', 'ignorelocality': 0, 'dryrun': 0, 'workflow': 'crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8', 'nonprodsw': 1, 'oneEventMode': 0, 'saveoutput': 1, 'publication': 1, 'totalunits': 0, 'splitalgo': 'FileBased', 'ignoreglobalblacklist': 0, 'nonvaliddata': 1, 'dbsurl': 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader', 'jobtype': 'Analysis', 'requireaccelerator': 0, 'publishname2': 'MC_2018'}
+DEBUG 2024-12-10 16:54:47.627 UTC: 	 submit() - jobconfig {'cachefilename': '77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz', 'jobarch': 'slc7_amd64_gcc700', 'addoutputfiles': ['output.root'], 'cacheurl': u'https://cmsweb.cern.ch/S3/crabcache_prod', 'jobsw': 'CMSSW_10_6_23', 'tfileoutfiles': [], 'debugfilename': 'd10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz', 'inputdata': '/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO', 'jobtype': 'Analysis', 'edmoutfiles': []}
+INFO 2024-12-10 16:54:47.627 UTC: 	 Sending the request to the server at cmsweb.cern.ch
+DEBUG 2024-12-10 16:54:47.627 UTC: 	 Submitting {'maxjobruntime': 1250, 'extrajdl': [], 'lfn': '/store/user/tmenezes/MagneticMonopole_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/', 'savelogsflag': 1, 'useparent': 0, 'inputblocks': [], 'asyncdest': 'T3_CH_CERNBOX', 'algoargs': 1, 'cachefilename': '77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz', 'numcores': 1, 'addoutputfiles': ['output.root'], 'generator': 'pythia', 'maxmemory': 2000, 'partialdataset': 0, 'publishdbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', 'priority': 10, 'jobsw': 'CMSSW_10_6_23', 'edmoutfiles': [], 'userfiles': [], 'inputdata': '/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO', 'ignorelocality': 0, 'dryrun': 0, 'workflow': 'crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8', 'cacheurl': u'https://cmsweb.cern.ch/S3/crabcache_prod', 'nonprodsw': 1, 'tfileoutfiles': [], 'oneEventMode': 0, 'debugfilename': 'd10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz', 'saveoutput': 1, 'publication': 1, 'jobarch': 'slc7_amd64_gcc700', 'totalunits': 0, 'splitalgo': 'FileBased', 'ignoreglobalblacklist': 0, 'nonvaliddata': 1, 'dbsurl': 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader', 'jobtype': 'Analysis', 'requireaccelerator': 0, 'publishname2': 'MC_2018'} 
+DEBUG 2024-12-10 16:54:47.628 UTC: 	 Encoded data for curl request: maxjobruntime=1250&lfn=%2Fstore%2Fuser%2Ftmenezes%2FMagneticMonopole_MC_2018%2FMonopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8%2F&savelogsflag=1&useparent=0&asyncdest=T3_CH_CERNBOX&algoargs=1&cachefilename=77c84accdd0bce8b134b4b962344d71fce59489ea878660e5bac7cbbe7cd66f8.tar.gz&numcores=1&generator=pythia&maxmemory=2000&partialdataset=0&publishdbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fphys03%2FDBSWriter&priority=10&jobsw=CMSSW_10_6_23&inputdata=%2FMonopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8%2FRunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2%2FGEN-SIM-RECO&ignorelocality=0&dryrun=0&workflow=crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8&cacheurl=https%3A%2F%2Fcmsweb.cern.ch%2FS3%2Fcrabcache_prod&nonprodsw=1&oneEventMode=0&debugfilename=d10f1e071fc5ebba2519b4ca2853b1c86957a0591278d7edd7c34fe4f7e4d956.tar.gz&saveoutput=1&publication=1&jobarch=slc7_amd64_gcc700&totalunits=0&splitalgo=FileBased&ignoreglobalblacklist=0&nonvaliddata=1&dbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fglobal%2FDBSReader&jobtype=Analysis&requireaccelerator=0&publishname2=MC_2018&addoutputfiles=output.root
+DEBUG 2024-12-10 16:54:47.697 UTC: 	 Result: {u'result': [{u'RequestName': u'241210_165447:tmenezes_crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8'}]}
+INFO 2024-12-10 16:54:47.700 UTC: 	 Success: Your task has been delivered to the prod CRAB3 server.
+INFO 2024-12-10 16:54:47.700 UTC: 	 Task name: 241210_165447:tmenezes_crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8
+INFO 2024-12-10 16:54:47.700 UTC: 	 Project dir: 10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8
+INFO 2024-12-10 16:54:47.700 UTC: 	 Please use ' crab status -d 10Dec_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8/crab_MC_2018_Monopole_SpinHalf_DrellYan_M-3000_TuneCP5_13TeV_madgraph-pythia8 ' to check how the submission process proceeds.
+DEBUG 2024-12-10 16:54:47.700 UTC: 	 About to return

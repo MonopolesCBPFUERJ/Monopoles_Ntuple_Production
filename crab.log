@@ -1,0 +1,366 @@
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 Running on: Linux lxplus831.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-02 20:05:37.770 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-02 20:05:37.771 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2024-12-10 14:39:00.857 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-10 14:39:00.858 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2024-12-10 14:49:15.710 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 14:49:15.710 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 14:49:15.710 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 14:49:15.710 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 14:49:15.710 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-10 14:49:15.711 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-10 14:49:15.711 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2024-12-10 14:57:55.363 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 14:57:55.364 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 14:57:55.364 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 14:57:55.364 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 14:57:55.364 UTC: 	 Executing command: 'status'
+DEBUG 2024-12-10 14:57:55.364 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2024-12-10 14:57:55.364 UTC: 	 Error: --long is not a valid CRAB project directory.
+ERROR 2024-12-10 14:57:55.364 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/status.py", line 48, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 691, in validateOptions
+    raise ConfigurationException(msg)
+CRABClient.ClientExceptions.ConfigurationException: [91mError[0m: --long is not a valid CRAB project directory.
+INFO 2024-12-10 14:57:55.368 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2024-12-10 15:20:17.222 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-10 15:20:17.223 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2024-12-10 15:39:38.203 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 15:39:38.204 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 15:39:38.204 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 15:39:38.204 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 15:39:38.204 UTC: 	 Executing command: 'kill'
+DEBUG 2024-12-10 15:39:38.204 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2024-12-10 15:39:38.204 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab_EXOMONOPOLE_MC_2018
+ERROR 2024-12-10 15:39:38.204 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab_EXOMONOPOLE_MC_2018
+INFO 2024-12-10 15:39:38.236 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 Executing command: 'kill'
+DEBUG 2024-12-10 15:39:40.305 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2024-12-10 15:39:40.306 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2024-12-10 15:39:40.306 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+INFO 2024-12-10 15:39:40.307 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2024-12-10 15:40:02.034 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2024-12-10 15:40:02.034 UTC: 	 Running on: Linux lxplus830.cern.ch 4.18.0-553.22.1.el8_10.x86_64 #1 SMP Wed Sep 11 18:02:00 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2024-12-10 15:40:02.034 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2024-12-10 15:40:02.034 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2024-12-10 15:40:02.034 UTC: 	 Executing command: 'submit'
+DEBUG 2024-12-10 15:40:02.035 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2024-12-10 15:40:02.035 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-13 10:18:12.493 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 Executing command: 'kill'
+DEBUG 2025-01-13 11:01:07.759 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-13 11:01:07.759 UTC: 	 Error: Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8 is not a valid CRAB project directory.
+ERROR 2025-01-13 11:01:07.760 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 691, in validateOptions
+    raise ConfigurationException(msg)
+CRABClient.ClientExceptions.ConfigurationException: [91mError[0m: Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8 is not a valid CRAB project directory.
+INFO 2025-01-13 11:01:07.774 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-01-13 11:01:22.524 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 11:01:22.525 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 11:01:22.525 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 11:01:22.525 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 11:01:22.525 UTC: 	 Executing command: 'kill'
+DEBUG 2025-01-13 11:01:22.525 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-13 11:01:22.559 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2025-01-13 11:01:22.559 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+INFO 2025-01-13 11:01:22.561 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 Executing command: 'kill'
+DEBUG 2025-01-13 11:01:29.935 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-13 11:01:29.955 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-2000_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2025-01-13 11:01:29.955 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-2000_TuneCP5_13TeV_madgraph-pythia8
+INFO 2025-01-13 11:01:29.956 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 Executing command: 'kill'
+DEBUG 2025-01-13 11:01:37.892 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-13 11:01:37.924 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2025-01-13 11:01:37.924 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/13Jan_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-2500_TuneCP5_13TeV_madgraph-pythia8
+INFO 2025-01-13 11:01:37.925 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-01-13 13:49:42.472 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-13 13:49:42.473 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-13 14:59:07.616 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-13 14:59:07.617 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 Running on: Linux lxplus809.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-13 16:21:04.977 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-13 16:21:04.978 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-21 16:05:58.847 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-21 16:05:58.847 UTC: 	 Running on: Linux lxplus804.cern.ch 4.18.0-553.32.1.el8_10.x86_64 #1 SMP Mon Dec 2 06:32:20 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-21 16:05:58.847 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-21 16:05:58.847 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-21 16:05:58.847 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-21 16:05:58.848 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-21 16:05:58.848 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-27 13:40:27.867 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-27 13:40:27.868 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-27 14:21:25.639 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-27 14:21:25.640 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-27 14:32:28.844 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-27 14:32:28.845 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 Executing command: 'submit'
+DEBUG 2025-01-27 14:33:13.700 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-01-27 14:33:13.701 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-01-27 15:01:50.073 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 15:01:50.073 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 15:01:50.073 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 15:01:50.073 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 15:01:50.073 UTC: 	 Executing command: 'status'
+DEBUG 2025-01-27 15:01:50.076 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-27 15:01:50.076 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/27JanMETReview_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2025-01-27 15:01:50.077 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/status.py", line 48, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/27JanMETReview_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+INFO 2025-01-27 15:01:50.078 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 Running on: Linux lxplus806.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 Executing command: 'status'
+DEBUG 2025-01-27 15:02:11.706 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-01-27 15:02:11.707 UTC: 	 Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/27JanMETReview_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8/crab_27Jan_EXOMETReview_MC_2018_Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+ERROR 2025-01-27 15:02:11.707 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/status.py", line 48, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 695, in validateOptions
+    self.loadLocalCache()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 537, in loadLocalCache
+    raise ex
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 531, in loadLocalCache
+    self.cachedinfo, self.logfile = loadCache(self.requestarea, self.logger)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/ClientUtilities.py", line 445, in loadCache
+    raise CachefileNotFoundException(msg)
+CRABClient.ClientExceptions.CachefileNotFoundException: Cannot find .requestcache file in CRAB project directory /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/27JanMETReview_crab_EXOMONOPOLE_MC_2018/Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8/crab_27Jan_EXOMETReview_MC_2018_Monopole_SpinHalf_DrellYan_M-1500_TuneCP5_13TeV_madgraph-pythia8
+INFO 2025-01-27 15:02:11.708 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log
+DEBUG 2025-02-14 13:12:25.884 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-02-14 13:12:25.884 UTC: 	 Running on: Linux lxplus808.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-02-14 13:12:25.884 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-02-14 13:12:25.884 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-02-14 13:12:25.884 UTC: 	 Executing command: 'submit'
+DEBUG 2025-02-14 13:12:25.885 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-02-14 13:12:26.033 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 Running on: Linux lxplus808.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 Executing command: 'submit'
+DEBUG 2025-02-14 13:16:45.192 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-02-14 13:16:45.193 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-02-14 13:17:24.095 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-02-14 13:17:24.095 UTC: 	 Running on: Linux lxplus808.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-02-14 13:17:24.095 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-02-14 13:17:24.095 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-02-14 13:17:24.096 UTC: 	 Executing command: 'submit'
+DEBUG 2025-02-14 13:17:24.096 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-02-14 13:17:24.096 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-02-17 10:41:02.752 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-02-17 10:41:02.753 UTC: 	 Running on: Linux lxplus808.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-02-17 10:41:02.753 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-02-17 10:41:02.753 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-02-17 10:41:02.753 UTC: 	 Executing command: 'submit'
+DEBUG 2025-02-17 10:41:02.753 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+DEBUG 2025-02-17 10:41:02.754 UTC: 	 Will use CRAB plugin ANALYSIS (i.e. will run an analysis job type).
+DEBUG 2025-02-17 11:41:44.791 UTC: 	 CRAB Client version: v3.241125
+DEBUG 2025-02-17 11:41:44.791 UTC: 	 Running on: Linux lxplus808.cern.ch 4.18.0-553.30.1.el8_10.x86_64 #1 SMP Fri Nov 15 03:46:25 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+DEBUG 2025-02-17 11:41:44.791 UTC: 	 Using SINGULARITY image: el7:x86_64
+DEBUG 2025-02-17 11:41:44.791 UTC: 	 Operating System: CentOS Linux 7 (Core)
+DEBUG 2025-02-17 11:41:44.791 UTC: 	 Executing command: 'status'
+DEBUG 2025-02-17 11:41:44.792 UTC: 	 Found CRAB cache file /afs/cern.ch/user/t/tmenezes/.crab3
+ERROR 2025-02-17 11:41:44.795 UTC: 	 Error: 17Feb_METReview_crab_EXOMONOPOLE_DATA_2016APV/Run2016C/crab_14Feb_EXOMETReview_DATA_2016APV_Run2016 is not a valid CRAB project directory.
+ERROR 2025-02-17 11:41:44.795 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 157, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/bin/crab.py", line 135, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])  # the crab command to be executed
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/status.py", line 48, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 281, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/v3.241125.00/lib/CRABClient/Commands/SubCommand.py", line 691, in validateOptions
+    raise ConfigurationException(msg)
+CRABClient.ClientExceptions.ConfigurationException: [91mError[0m: 17Feb_METReview_crab_EXOMONOPOLE_DATA_2016APV/Run2016C/crab_14Feb_EXOMETReview_DATA_2016APV_Run2016 is not a valid CRAB project directory.
+INFO 2025-02-17 11:41:44.814 UTC: 	 Log file is /afs/cern.ch/work/t/tmenezes/public/CMSSW_10_6_23/src/crab.log

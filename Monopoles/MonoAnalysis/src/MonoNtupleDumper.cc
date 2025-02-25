@@ -19,7 +19,7 @@
 //
 //
 // July 2021 : Lin Shih:fix HepMC -> GenParticle
-// 			
+//      
 //
 // system include files
 #include <vector>
@@ -68,6 +68,9 @@
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/GenMETCollection.h"
 #include "DataFormats/METReco/interface/GenMET.h"
+//
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
 
 // vertex
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
@@ -136,10 +139,6 @@
 #include "TVirtualFitter.h"
 
 #include "DataFormats/GeometryCommonDetAlgo/interface/ErrorFrameTransformer.h"
-
-#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
-
-
 using namespace std;
 using namespace edm;
 typedef std::vector<Trajectory> TrajectoryCollection;
@@ -148,9 +147,6 @@ bool passFilter(const float eta,const float phi,const trigger::TriggerEvent& tri
 int getPho175TrigCode(const float eta,const float phi,const trigger::TriggerEvent& trigEvent,const float maxDR2=0.2*0.2);
 int getPho200TrigCode(const float eta,const float phi,const trigger::TriggerEvent& trigEvent,const float maxDR2=0.2*0.2);
 bool evtPassesPho175L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPho200L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPFMET250L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPFMET300L1(const trigger::TriggerEvent& trigEvent);
 
 #define DEBUG
 
@@ -195,7 +191,6 @@ private:
   
   std::string m_output;
   TFile *m_outputFile;
-  TTree *m_tree;
   
   // HLTConfigProvider
   HLTConfigProvider m_hltConfig;
@@ -223,7 +218,6 @@ private:
   edm::EDGetTokenT< vector<reco::GenMET>> m_Tag_GenMET;
   edm::EDGetTokenT< vector<reco::CaloMET> > m_Tag_CaloMET;
 
-
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_bClusters;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_cClusters;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_combClusters;
@@ -231,8 +225,9 @@ private:
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeUnclean;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeComb;
 
-  // pileup
-  edm::EDGetTokenT<std::vector<PileupSummaryInfo>> m_puInfoToken;
+  // PAT objects
+  edm::EDGetTokenT< std::vector<pat::Jet>> m_Tag_PatJets;
+  edm::EDGetTokenT< std::vector<pat::MET>> m_Tag_PatMETs;
 
   bool m_isData;
 
@@ -245,20 +240,20 @@ private:
 
   //Generator
   static const int MONO_PID = MONOID;
-  
-  //Tracker 
+
+  //Tracker
   MplTracker *_Tracker;
-  
+
   // TFileService
   //edm::Service<TFileService> m_fs;
-  
+
   // map cluster category (lengthxwidth thing) to a histogram
   // showing the average energy or time  in each cell
   //TFileDirectory *m_avgDir;
   std::map<Mono::ClustCategorizer,TH2D *> m_clustEMap;
   std::map<Mono::ClustCategorizer,TH2D *> m_clustTMap;
   std::map<Mono::ClustCategorizer,unsigned> m_clustCatCount;
-  
+
   std::vector<double> m_betas;
   std::vector<double> m_betaTs;
 
@@ -277,13 +272,8 @@ private:
   bool passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_;
   bool passHLT_CaloMET300_HBHECleaned_;
 
-
-  // For trigger efficiency
-  bool passHLT_IsoMu24_;
-  bool passHLT_Ele27_WPTight_Gsf_;
-  bool passHLT_PFJet500_;
-
   //
+  TTree * m_tree;
   
   bool _ClustHitOutput;
   bool _EleJetPhoOutput;
@@ -299,9 +289,6 @@ private:
   std::vector<bool> m_trigResults;
   std::vector<std::string> m_trigNames;  
   bool m_evtPassesPho175L1;
-  bool m_evtPassesPho200L1;
-  bool m_evtPassesPFMET250L1;
-  bool m_evtPassesPFMET300L1;
   
   // Ecal Observable information
   unsigned m_nClusters;
@@ -367,11 +354,11 @@ private:
   std::vector<double> m_egClust_frac51;
   std::vector<double> m_egClust_frac15;
   std::vector<double> m_egClust_e55;
-  //std::vector<double> m_egClust_e2x5Right;
-  //std::vector<double> m_egClust_e2x5Left;
-  //std::vector<double> m_egClust_e2x5Top;
-  //std::vector<double> m_egClust_e2x5Bottom;
-  //std::vector<double> m_egClust_e2x5Max;
+  std::vector<double> m_egClust_e2x5Right;
+  std::vector<double> m_egClust_e2x5Left;
+  std::vector<double> m_egClust_e2x5Top;
+  std::vector<double> m_egClust_e2x5Bottom;
+  std::vector<double> m_egClust_e2x5Max;
   std::vector<double> m_egClust_eLeft;
   std::vector<double> m_egClust_eRight;
   std::vector<double> m_egClust_eTop;
@@ -382,7 +369,7 @@ private:
   std::vector<double> m_egClust_matchPID;
   std::vector<double> m_egClust_hcalIso;
   std::vector<double> m_egClust_SwissCross;
-	
+  
   
   // Ecal hybrid clusters (cleaned collection)
   unsigned m_nCleanEgamma;
@@ -393,11 +380,11 @@ private:
   std::vector<double> m_egClean_frac51;
   std::vector<double> m_egClean_frac15;
   std::vector<double> m_egClean_e55;
-  //std::vector<double> m_egClean_e2x5Right;
-  //std::vector<double> m_egClean_e2x5Left;
-  //std::vector<double> m_egClean_e2x5Top;
-  //std::vector<double> m_egClean_e2x5Bottom;
-  //std::vector<double> m_egClean_e2x5Max;
+  std::vector<double> m_egClean_e2x5Right;
+  std::vector<double> m_egClean_e2x5Left;
+  std::vector<double> m_egClean_e2x5Top;
+  std::vector<double> m_egClean_e2x5Bottom;
+  std::vector<double> m_egClean_e2x5Max;
   std::vector<double> m_egClean_eLeft;
   std::vector<double> m_egClean_eRight;
   std::vector<double> m_egClean_eTop;
@@ -418,11 +405,11 @@ private:
   std::vector<double> m_egComb_frac51;
   std::vector<double> m_egComb_frac15;
   std::vector<double> m_egComb_e55;
-  //std::vector<double> m_egComb_e2x5Right;
-  //std::vector<double> m_egComb_e2x5Left;
-  //std::vector<double> m_egComb_e2x5Top;
-  //std::vector<double> m_egComb_e2x5Bottom;
-  //std::vector<double> m_egComb_e2x5Max;
+  std::vector<double> m_egComb_e2x5Right;
+  std::vector<double> m_egComb_e2x5Left;
+  std::vector<double> m_egComb_e2x5Top;
+  std::vector<double> m_egComb_e2x5Bottom;
+  std::vector<double> m_egComb_e2x5Max;
   std::vector<double> m_egComb_eLeft;
   std::vector<double> m_egComb_eRight;
   std::vector<double> m_egComb_eTop;
@@ -445,11 +432,11 @@ private:
   std::vector<double> m_eeClean_frac51;
   std::vector<double> m_eeClean_frac15;
   std::vector<double> m_eeClean_e55;
-  //std::vector<double> m_eeClean_e2x5Right;
-  //std::vector<double> m_eeClean_e2x5Left;
-  //std::vector<double> m_eeClean_e2x5Top;
-  //std::vector<double> m_eeClean_e2x5Bottom;
-  //std::vector<double> m_eeClean_e2x5Max;
+  std::vector<double> m_eeClean_e2x5Right;
+  std::vector<double> m_eeClean_e2x5Left;
+  std::vector<double> m_eeClean_e2x5Top;
+  std::vector<double> m_eeClean_e2x5Bottom;
+  std::vector<double> m_eeClean_e2x5Max;
   std::vector<double> m_eeClean_eLeft;
   std::vector<double> m_eeClean_eRight;
   std::vector<double> m_eeClean_eTop;
@@ -470,11 +457,11 @@ private:
   std::vector<double> m_eeUnclean_frac51;
   std::vector<double> m_eeUnclean_frac15;
   std::vector<double> m_eeUnclean_e55;
-  //std::vector<double> m_eeUnclean_e2x5Right;
-  //std::vector<double> m_eeUnclean_e2x5Left;
-  //std::vector<double> m_eeUnclean_e2x5Top;
-  //std::vector<double> m_eeUnclean_e2x5Bottom;
-  //std::vector<double> m_eeUnclean_e2x5Max;
+  std::vector<double> m_eeUnclean_e2x5Right;
+  std::vector<double> m_eeUnclean_e2x5Left;
+  std::vector<double> m_eeUnclean_e2x5Top;
+  std::vector<double> m_eeUnclean_e2x5Bottom;
+  std::vector<double> m_eeUnclean_e2x5Max;
   std::vector<double> m_eeUnclean_eLeft;
   std::vector<double> m_eeUnclean_eRight;
   std::vector<double> m_eeUnclean_eTop;
@@ -495,11 +482,11 @@ private:
   std::vector<double> m_eeComb_frac51;
   std::vector<double> m_eeComb_frac15;
   std::vector<double> m_eeComb_e55;
-  //std::vector<double> m_eeComb_e2x5Right;
-  //std::vector<double> m_eeComb_e2x5Left;
-  //std::vector<double> m_eeComb_e2x5Top;
-  //std::vector<double> m_eeComb_e2x5Bottom;
-  //std::vector<double> m_eeComb_e2x5Max;
+  std::vector<double> m_eeComb_e2x5Right;
+  std::vector<double> m_eeComb_e2x5Left;
+  std::vector<double> m_eeComb_e2x5Top;
+  std::vector<double> m_eeComb_e2x5Bottom;
+  std::vector<double> m_eeComb_e2x5Max;
   std::vector<double> m_eeComb_eLeft;
   std::vector<double> m_eeComb_eRight;
   std::vector<double> m_eeComb_eTop;
@@ -528,7 +515,6 @@ private:
   std::vector<double> m_jet_E;
   std::vector<double> m_jet_p;
   std::vector<double> m_jet_pt;
-  std::vector<double> m_jet_mass;
   std::vector<double> m_jet_px;
   std::vector<double> m_jet_py;
   std::vector<double> m_jet_pz;
@@ -583,9 +569,7 @@ private:
   std::vector<int> m_pf_pdgId;
   std::vector<int> m_pf_status;
 
-  //pileup
-  double m_nTrueInteractions; 
-
+  
   // MET information
   double m_mpt;
   double m_mpPhi;
@@ -599,6 +583,13 @@ private:
   double m_CaloMpx;
   double m_CaloMpy;
   double m_CaloMETPhi;
+
+  double m_pat_mpt;
+  double m_pat_mpPhi;
+  double m_pat_CaloMpt;
+  double m_pat_CaloMpx;
+  double m_pat_CaloMpy;
+  double m_pat_CaloMETPhi;
   
   // Generator level Branches
   double m_mono_p;
@@ -643,7 +634,7 @@ private:
   double m_amonExp_eta;
   double m_amonExp_phi;
   double m_amonExpEE_eta;
-  double m_amonExpEE_phi;	
+  double m_amonExpEE_phi; 
 
   
 ////////////////////////////////////////
@@ -719,7 +710,8 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_Tag_eeClean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCleanTag") ) )
   ,m_Tag_eeUnclean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeUncleanTag") ) )
   ,m_Tag_eeComb( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCombTag") ) )
-  ,m_puInfoToken( consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupInfoTag") ))
+  ,m_Tag_PatJets( consumes< std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("PatJetTag")))
+  ,m_Tag_PatMETs( consumes< std::vector<pat::MET> >(iConfig.getParameter<edm::InputTag>("PatMETTag")))
   ,m_isData(iConfig.getParameter<bool>("isData") )
   ,m_ecalObs(iConfig)
 {
@@ -760,21 +752,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   // tree->Branch("passHLT_Photon175" , &passHLT_Photon175_ , "passHLT_Photon175/O");
   // }
 
-  
-  // Pileup - Added by Mateus
-  edm::Handle<std::vector<PileupSummaryInfo>> puInfoH;
-  iEvent.getByToken(m_puInfoToken, puInfoH);
-
-  m_nTrueInteractions = -1.0;
-  if (puInfoH.isValid()) {
-   for (auto & PVI : *puInfoH) {
-      if (PVI.getBunchCrossing() == 0) {
-        m_nTrueInteractions = PVI.getTrueNumInteractions();
-        break;
-      }
-    }
-}
-  
   //=============================================================
   //
   //             Trigger Info
@@ -798,11 +775,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ = 0;
   passHLT_CaloMET300_HBHECleaned_ = 0;
 
-  // for trigger efficiency
-  passHLT_IsoMu24_ = 0;
-  passHLT_Ele27_WPTight_Gsf_ = 0;
-  passHLT_PFJet500_ = 0;
-
   for (size_t i = 0; i < trigNames.size(); ++i) {
     const std::string &name = trigNames.triggerName(i);
     bool fired = triggerResults.accept(i);
@@ -820,10 +792,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     passHLT_PFMET200_HBHE_BeamHaloCleaned_ |= name.find("HLT_PFMET200_HBHE_BeamHaloCleaned_v") != std::string::npos;
     passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ |= name.find("HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v") != std::string::npos;
     passHLT_CaloMET300_HBHECleaned_ |= name.find("HLT_CaloMET300_HBHECleaned_v") != std::string::npos;
-    //For trigger efficiency
-    passHLT_IsoMu24_ |= name.find("HLT_IsoMu24_v") != std::string::npos;
-    passHLT_Ele27_WPTight_Gsf_ |= name.find("HLT_Ele27_WPTight_Gsf_v") != std::string::npos;
-    passHLT_PFJet500_ |= name.find("HLT_PFJet500_v") != std::string::npos;
   }
 #ifdef DEBUG
   cout<< "HLT_Photon175 = " <<passHLT_Photon175_<<endl;
@@ -838,10 +806,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   cout<< "HLT_PFMET200_HBHE_BeamHaloCleaned = " <<passHLT_PFMET200_HBHE_BeamHaloCleaned_<<endl;
   cout<< "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned = " <<passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_<<endl;
   cout<< "HLT_CaloMET300_HBHECleaned = " <<passHLT_CaloMET300_HBHECleaned_<<endl;
-  //for trigger efficiency
-  cout<< "HLT_IsoMu24 = " <<passHLT_IsoMu24_<<endl;
-  cout<< "HLT_Ele27_WPTight_Gsf = " <<passHLT_Ele27_WPTight_Gsf_<<endl;
-  cout<< "HLT_PFJet500 = " <<passHLT_PFJet500_<<endl;
 #endif
 
   // get a handle on the trigger results                                                    
@@ -886,9 +850,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     //    cout << m_trigNames << " " << HLTR->accept(HLT_Photon175_v) << endl; 
   }
   m_evtPassesPho175L1 = evtPassesPho175L1(*m_trigEventHandle);
-  m_evtPassesPho200L1 = evtPassesPho200L1(*m_trigEventHandle);
-  m_evtPassesPFMET250L1 = evtPassesPFMET250L1(*m_trigEventHandle);
-  m_evtPassesPFMET300L1 = evtPassesPFMET300L1(*m_trigEventHandle);
  
   /*
     Handle<edm::TriggerResults> triggerResultsHandle; //our trigger result object
@@ -1000,7 +961,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   const unsigned nbClusters = bClusters->size();
 
   EcalClusterTools ecalTool;
-  //EcalTools ecalTools;
+  EcalTools ecalTools;
   std::vector<int> exclFlags;
   std::vector<int> sevExcl;
 
@@ -1024,11 +985,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*bClusters)[i],ecalRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*bClusters)[i],ecalRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*bClusters)[i],ecalRecHits.product());
-    //const float e2x5Right  = ecalTool.e2x5Right((*bClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Left   = ecalTool.e2x5Left((*bClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Top    = ecalTool.e2x5Top((*bClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Bottom = ecalTool.e2x5Bottom((*bClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Max    = ecalTool.e2x5Max((*bClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*bClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*bClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*bClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*bClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*bClusters)[i],ecalRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*bClusters)[i],ecalRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*bClusters)[i],ecalRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*bClusters)[i],ecalRecHits.product(),topology);
@@ -1082,11 +1043,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*cClusters)[i],ecalRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*cClusters)[i],ecalRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*cClusters)[i],ecalRecHits.product());
-    //const float e2x5Right  = ecalTool.e2x5Right((*cClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Left   = ecalTool.e2x5Left((*cClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Top    = ecalTool.e2x5Top((*cClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Bottom = ecalTool.e2x5Bottom((*cClusters)[i],ecalRecHits.product(),topology);
-    //const float e2x5Max    = ecalTool.e2x5Max((*cClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*cClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*cClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*cClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*cClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*cClusters)[i],ecalRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*cClusters)[i],ecalRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*cClusters)[i],ecalRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*cClusters)[i],ecalRecHits.product(),topology);
@@ -1134,11 +1095,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*combClusters)[i],ecalRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*combClusters)[i],ecalRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*combClusters)[i],ecalRecHits.product());
-   //const float e2x5Right  = ecalTool.e2x5Right((*combClusters)[i],ecalRecHits.product(),topology);
-   //const float e2x5Left   = ecalTool.e2x5Left((*combClusters)[i],ecalRecHits.product(),topology);
-   //const float e2x5Top    = ecalTool.e2x5Top((*combClusters)[i],ecalRecHits.product(),topology);
-   //const float e2x5Bottom = ecalTool.e2x5Bottom((*combClusters)[i],ecalRecHits.product(),topology);
-   //const float e2x5Max    = ecalTool.e2x5Max((*combClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*combClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*combClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*combClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*combClusters)[i],ecalRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*combClusters)[i],ecalRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*combClusters)[i],ecalRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*combClusters)[i],ecalRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*combClusters)[i],ecalRecHits.product(),topology);
@@ -1149,8 +1110,8 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_egComb_frac15.push_back( e15/e55 );
     m_egComb_e55.push_back(e55);
     m_egComb_eMax.push_back(eMax/e55);
-    //m_egComb_e25Right.push_back(ecalTool.e2x5Right((*combClusters)[i],ecalRecHits.product(),topology));
-    //m_egComb_e25Left.push_back(ecalTool.e2x5Left((*combClusters)[i],ecalRecHits.product(),topology));
+    m_egComb_e25Right.push_back(ecalTool.e2x5Right((*combClusters)[i],ecalRecHits.product(),topology));
+    m_egComb_e25Left.push_back(ecalTool.e2x5Left((*combClusters)[i],ecalRecHits.product(),topology));
     m_egComb_hcalIso.push_back( egIso.getHcalESum((*combClusters)[i].position()) );
     m_egComb_SwissCross.push_back( SwissCross);
 
@@ -1191,11 +1152,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*eeClean)[i],eeRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*eeClean)[i],eeRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*eeClean)[i],eeRecHits.product());
-    //const float e2x5Right  = ecalTool.e2x5Right((*eeClean)[i],eeRecHits.product(),topology);
-    //const float e2x5Left   = ecalTool.e2x5Left((*eeClean)[i],eeRecHits.product(),topology);
-    //const float e2x5Top    = ecalTool.e2x5Top((*eeClean)[i],eeRecHits.product(),topology);
-    //const float e2x5Bottom = ecalTool.e2x5Bottom((*eeClean)[i],eeRecHits.product(),topology);
-    //const float e2x5Max    = ecalTool.e2x5Max((*eeClean)[i],eeRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*eeClean)[i],eeRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*eeClean)[i],eeRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*eeClean)[i],eeRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*eeClean)[i],eeRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*eeClean)[i],eeRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*eeClean)[i],eeRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*eeClean)[i],eeRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*eeClean)[i],eeRecHits.product(),topology);
@@ -1243,11 +1204,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*eeUnclean)[i],eeRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*eeUnclean)[i],eeRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*eeUnclean)[i],eeRecHits.product());
-    //const float e2x5Right  = ecalTool.e2x5Right((*eeUnclean)[i],eeRecHits.product(),topology);
-    //const float e2x5Left   = ecalTool.e2x5Left((*eeUnclean)[i],eeRecHits.product(),topology);
-    //const float e2x5Top    = ecalTool.e2x5Top((*eeUnclean)[i],eeRecHits.product(),topology);
-    //const float e2x5Bottom = ecalTool.e2x5Bottom((*eeUnclean)[i],eeRecHits.product(),topology);
-    //const float e2x5Max    = ecalTool.e2x5Max((*eeUnclean)[i],eeRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*eeUnclean)[i],eeRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*eeUnclean)[i],eeRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*eeUnclean)[i],eeRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*eeUnclean)[i],eeRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*eeUnclean)[i],eeRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*eeUnclean)[i],eeRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*eeUnclean)[i],eeRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*eeUnclean)[i],eeRecHits.product(),topology);
@@ -1295,11 +1256,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     const float e51 = ecalTool.e5x1((*eeComb)[i],eeRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*eeComb)[i],eeRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*eeComb)[i],eeRecHits.product());
-    //const float e2x5Right  = ecalTool.e2x5Right((*eeComb)[i],eeRecHits.product(),topology);
-    //const float e2x5Left   = ecalTool.e2x5Left((*eeComb)[i],eeRecHits.product(),topology);
-    //const float e2x5Top    = ecalTool.e2x5Top((*eeComb)[i],eeRecHits.product(),topology);
-    //const float e2x5Bottom = ecalTool.e2x5Bottom((*eeComb)[i],eeRecHits.product(),topology);
-    //const float e2x5Max    = ecalTool.e2x5Max((*eeComb)[i],eeRecHits.product(),topology);
+    const float e2x5Right  = ecalTool.e2x5Right((*eeComb)[i],eeRecHits.product(),topology);
+    const float e2x5Left   = ecalTool.e2x5Left((*eeComb)[i],eeRecHits.product(),topology);
+    const float e2x5Top    = ecalTool.e2x5Top((*eeComb)[i],eeRecHits.product(),topology);
+    const float e2x5Bottom = ecalTool.e2x5Bottom((*eeComb)[i],eeRecHits.product(),topology);
+    const float e2x5Max    = ecalTool.e2x5Max((*eeComb)[i],eeRecHits.product(),topology);
     const float eLeft      = ecalTool.eLeft((*eeComb)[i],eeRecHits.product(),topology);
     const float eRight     = ecalTool.eRight((*eeComb)[i],eeRecHits.product(),topology);
     const float eTop       = ecalTool.eTop((*eeComb)[i],eeRecHits.product(),topology);
@@ -1310,8 +1271,8 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_eeComb_frac15.push_back( e15/e55 );
     m_eeComb_e55.push_back(e55);
     m_eeComb_eMax.push_back(eMax/e55);
-    //m_eeComb_e25Right.push_back(ecalTool.e2x5Right((*eeComb)[i],eeRecHits.product(),topology));
-    //m_eeComb_e25Left.push_back(ecalTool.e2x5Left((*eeComb)[i],eeRecHits.product(),topology));
+    m_eeComb_e25Right.push_back(ecalTool.e2x5Right((*eeComb)[i],eeRecHits.product(),topology));
+    m_eeComb_e25Left.push_back(ecalTool.e2x5Left((*eeComb)[i],eeRecHits.product(),topology));
     m_eeComb_hcalIso.push_back( egIso.getHcalESum((*eeComb)[i].position()) );
     m_eeComb_SwissCross.push_back( SwissCross);
 
@@ -1364,7 +1325,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_jet_pz.push_back( jet.pz() );
     m_jet_eta.push_back( jet.eta() );
     m_jet_phi.push_back( jet.phi() );
-    m_jet_mass.push_back( jet.mass() );
 
     if ( !m_isData ) {
       //  m_jet_matchDR.push_back( tagger.matchDR()[i] );
@@ -1397,9 +1357,9 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_pho_phi.push_back( pho.phi() );
 
     if ( !m_isData ) {
-            //m_pho_matchDR.push_back( tagger.matchDR()[i] );
-       //m_pho_tagged.push_back( tagger.tagResult()[i] );
-       //m_pho_matchPID.push_back( tagger.matchPID()[i] );
+      //      m_pho_matchDR.push_back( tagger.matchDR()[i] );
+      // m_pho_tagged.push_back( tagger.tagResult()[i] );
+      // m_pho_matchPID.push_back( tagger.matchPID()[i] );
     }
 
   }
@@ -1441,7 +1401,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   iEvent.getByToken(m_Tag_PF,pfCandidate);
   const unsigned nPFCandidate = pfCandidate->size();
   for (unsigned  i=0; i != nPFCandidate; i++){
-	
+
     const reco::PFCandidate &pf = (*pfCandidate)[i];
     m_pf_E.push_back( pf.energy() );
     m_pf_p.push_back( pf.p() );
@@ -1451,19 +1411,16 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_pf_pz.push_back( pf.pz() );
     m_pf_eta.push_back( pf.eta() );
     m_pf_phi.push_back( pf.phi() );
-//    reco::PFCandidate::ParticleType & type = (*pfCandidate)[i];
-    
+    // reco::PFCandidate::ParticleType & type = (*pfCandidate)[i];
     m_pf_pdgId.push_back( pf.particleId());
-		
-
-    m_pf_status.push_back( pf.status());	
+    m_pf_status.push_back( pf.status());
   }
   m_pf_N = nPFCandidate;
 
   // get MET collection
   Handle<std::vector<reco::PFMET> > met;
   iEvent.getByToken(m_Tag_MET,met);
-  
+
   Handle<std::vector<reco::CaloMET> > Calomet;
   iEvent.getByToken(m_Tag_CaloMET,Calomet);
 
@@ -1471,84 +1428,89 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   m_mpt = (*met)[0].pt();
   m_mpPhi = (*met)[0].phi();
 
-  m_CaloMpt = (*Calomet)[0].pt(); 
-  m_CaloMpx = (*Calomet)[0].px(); 
+  m_CaloMpt = (*Calomet)[0].pt();
+  m_CaloMpx = (*Calomet)[0].px();
   m_CaloMpy = (*Calomet)[0].py();
-  m_CaloMETPhi = (*Calomet)[0].phi(); 
+  m_CaloMETPhi = (*Calomet)[0].phi();
 
+  Handle<std::vector<pat::MET> > patmet;
+  iEvent.getByToken(m_Tag_PatMETs,patmet);
+
+  // fill MET Branches
+  m_pat_mpt = (*patmet)[0].pt();
+  m_pat_mpPhi = (*patmet)[0].phi();
+
+  m_pat_CaloMpt = ((*patmet)[0]).caloMETPt();
+  m_pat_CaloMpx = ((*patmet)[0]).caloMETP2().px;
+  m_pat_CaloMpy = ((*patmet)[0]).caloMETP2().py;
+  m_pat_CaloMETPhi = ((*patmet)[0]).caloMETPhi();
 
   // fill generator Branches
   if (!m_isData){
+    Handle<std::vector<reco::GenMET> > Genmet;
+    iEvent.getByToken(m_Tag_GenMET,Genmet);
 
-  Handle<std::vector<reco::GenMET> > Genmet;
-  iEvent.getByToken(m_Tag_GenMET,Genmet);
+    m_GenMpt = (*Genmet)[0].pt(); 
+    m_GenMpx = (*Genmet)[0].px(); 
+    m_GenMpy = (*Genmet)[0].py(); 
+    m_GenMETPhi = (*Genmet)[0].phi(); 
 
-  m_GenMpt = (*Genmet)[0].pt(); 
-  m_GenMpx = (*Genmet)[0].px(); 
-  m_GenMpy = (*Genmet)[0].py(); 
-  m_GenMETPhi = (*Genmet)[0].phi(); 
-    
-  Mono::MonoGenTrackExtrapolator extrap; 
- 
-	
+    Mono::MonoGenTrackExtrapolator extrap; 
+
     //added by Lin July 21
-   Handle< vector<reco::GenParticle> > genParticles;
-   iEvent.getByToken(m_genParticles, genParticles);
-   for(size_t i = 0; i < genParticles->size(); ++ i) {
+    Handle< vector<reco::GenParticle> > genParticles;
+    iEvent.getByToken(m_genParticles, genParticles);
+    for(size_t i = 0; i < genParticles->size(); ++ i) {
 
-     const reco::GenParticle & p = (*genParticles)[i];
-	
-
-	if(abs(p.pdgId())== MONO_PID &&  p.status()==1){
-	if(p.pdgId()>0){	
-	m_mono_p   = p.p();
-	m_mono_eta = p.eta();
-	m_mono_phi = p.phi();
-	m_mono_m   = p.mass();
-	m_mono_px  = p.px();
-	m_mono_py  = p.py();
-	m_mono_pz  = p.pz();
-	m_mono_pt  = p.pt();
-	m_mono_Et  = p.et();	
-	m_mono_Et2 = p.et2();//transverse energy squared, use this for cut	
-	m_mono_E   = p.energy();	
-	m_mono_mt  = p.mt();//transverse mass
-	m_mono_mt2 = p.mtSqr();//transverse mass squared
-	m_mono_status   = p.status();	
-	m_mono_pdgId    = p.pdgId();
-#ifdef DEBUG
-	std::cout<<"PDG ID : "<<p.pdgId()<<endl;
-	std::cout<<"Status : "<<p.status()<<endl;
-#endif 
-	}
-	else{
-
-	m_amon_p   = p.p();
-	m_amon_eta = p.eta();
-	m_amon_phi = p.phi();
-	m_amon_m   = p.mass();
-	m_amon_px  = p.px();
-	m_amon_py  = p.py();
-	m_amon_pz  = p.pz();
-	m_amon_pt  = p.pt();
-	m_amon_Et  = p.et();	
-	m_amon_Et2 = p.et2();//transverse energy squared, use this for cut	
-	m_amon_E   = p.energy();	
-	m_amon_mt  = p.mt();//transverse mass
-	m_amon_mt2 = p.mtSqr();//transverse mass squared
-	m_amon_status   = p.status();	
-	m_amon_pdgId    = p.pdgId();
-#ifdef DEBUG
-	std::cout<<"PDG ID : "<<p.pdgId()<<endl;
-	std::cout<<"Status : "<<p.status()<<endl;
-#endif
-    	}	
-      }	
-  }   
+      const reco::GenParticle & p = (*genParticles)[i];
   
-}
 
-  
+      if(abs(p.pdgId())== MONO_PID &&  p.status()==1){
+        if(p.pdgId()>0){  
+          m_mono_p   = p.p();
+          m_mono_eta = p.eta();
+          m_mono_phi = p.phi();
+          m_mono_m   = p.mass();
+          m_mono_px  = p.px();
+          m_mono_py  = p.py();
+          m_mono_pz  = p.pz();
+          m_mono_pt  = p.pt();
+          m_mono_Et  = p.et();  
+          m_mono_Et2 = p.et2();//transverse energy squared, use this for cut  
+          m_mono_E   = p.energy();  
+          m_mono_mt  = p.mt();//transverse mass
+          m_mono_mt2 = p.mtSqr();//transverse mass squared
+          m_mono_status   = p.status(); 
+          m_mono_pdgId    = p.pdgId();
+          #ifdef DEBUG
+            std::cout<<"PDG ID : "<<p.pdgId()<<endl;
+            std::cout<<"Status : "<<p.status()<<endl;
+          #endif 
+        }
+        else{
+          m_amon_p   = p.p();
+          m_amon_eta = p.eta();
+          m_amon_phi = p.phi();
+          m_amon_m   = p.mass();
+          m_amon_px  = p.px();
+          m_amon_py  = p.py();
+          m_amon_pz  = p.pz();
+          m_amon_pt  = p.pt();
+          m_amon_Et  = p.et();  
+          m_amon_Et2 = p.et2();//transverse energy squared, use this for cut  
+          m_amon_E   = p.energy();  
+          m_amon_mt  = p.mt();//transverse mass
+          m_amon_mt2 = p.mtSqr();//transverse mass squared
+          m_amon_status   = p.status(); 
+          m_amon_pdgId    = p.pdgId();
+          #ifdef DEBUG
+            std::cout<<"PDG ID : "<<p.pdgId()<<endl;
+            std::cout<<"Status : "<<p.status()<<endl;
+          #endif
+        }
+      }
+    }
+  }
   //////////////////////////////////////////////////////////
   // Perform track to cluster matching and form monopole candidates
   //
@@ -1576,8 +1538,6 @@ MonoNtupleDumper::beginJob()
 
   m_tree->Branch("NPV",&m_NPV,"NPV/i");
 
-  m_tree->Branch("nTrueInteractions", &m_nTrueInteractions, "nTrueInteractions/D");
-
   // trigger information
   m_tree->Branch("trigResult",&m_trigResults);
   m_tree->Branch("trigNames",&m_trigNames);
@@ -1592,17 +1552,9 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("passHLT_PFMET300_HBHECleaned" , &passHLT_PFMET300_HBHECleaned_ , "passHLT_PFMET300_HBHECleaned/O");
   m_tree->Branch("passHLT_PFMET200_HBHE_BeamHaloCleaned" , &passHLT_PFMET200_HBHE_BeamHaloCleaned_ , "passHLT_PFMET200_HBHE_BeamHaloCleaned/O");
   m_tree->Branch("passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned" , &passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ , "passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned/O");
-  m_tree->Branch("passHLT_CaloMET300_HBHECleaned" , &passHLT_CaloMET300_HBHECleaned_ , "passHLT_CaloMET300_HBHECleaned/O");
-  // for trigger efficiency
-  m_tree->Branch("passHLT_IsoMu24" , &passHLT_IsoMu24_ , "passHLT_IsoMu24/O");
-  m_tree->Branch("passHLT_Ele27_WPTight_Gsf" , &passHLT_Ele27_WPTight_Gsf_ , "passHLT_Ele27_WPTight_Gsf/O");
-  m_tree->Branch("passHLT_PFJet500" , &passHLT_PFJet500_ , "passHLT_PFJet500/O");  
-
+  m_tree->Branch("passHLT_CaloMET300_HBHECleaned" , &passHLT_CaloMET300_HBHECleaned_ , "passHLT_CaloMET300_HBHECleaned/O"); 
   //L1
   m_tree->Branch("evtPassesPho175L1" , &m_evtPassesPho175L1);
-  m_tree->Branch("evtPassesPho200L1" , &m_evtPassesPho200L1);
-  m_tree->Branch("evtPassesPFMET250L1" , &m_evtPassesPFMET250L1);
-  m_tree->Branch("evtPassesPFMET300L1" , &m_evtPassesPFMET300L1);
 
   // combined candidates
   m_tree->Branch("cand_N",&m_nCandidates,"cand_N/i");
@@ -1655,99 +1607,99 @@ MonoNtupleDumper::beginJob()
 //   m_tree->Branch("clust_Ecells",&m_clust_Ecells,"clust_Ecells[1500]/D");
 //   m_tree->Branch("clust_Tcells",&m_clust_Tcells,"clust_Tcells[1500]/D");
 //  }
-   //m_tree->Branch("egClust_N",&m_nCleanEgamma,"egClust_N/i");
-   //m_tree->Branch("egClust_E",&m_egClust_E);
-   //m_tree->Branch("egClust_size",&m_egClust_size);
-   //m_tree->Branch("egClust_eta",&m_egClust_eta);
-   //m_tree->Branch("egClust_phi",&m_egClust_phi);
-   //m_tree->Branch("egClust_frac51",&m_egClust_frac51);
-   //m_tree->Branch("egClust_frac15",&m_egClust_frac15);
-   //m_tree->Branch("egClust_e55",&m_egClust_e55);
-   //m_tree->Branch("egClust_eMax",&m_egClust_eMax);
-   //m_tree->Branch("egClust_matchDR",&m_egClust_matchDR);
-   //m_tree->Branch("egClust_matchPID",&m_egClust_matchPID);
-   //m_tree->Branch("egClust_tagged",&m_egClust_tagged);
-   //m_tree->Branch("egClust_hcalIso",&m_egClust_hcalIso);
-   //m_tree->Branch("egClust_SwissCross",&m_egClust_SwissCross); 
+   m_tree->Branch("egClust_N",&m_nCleanEgamma,"egClust_N/i");
+   m_tree->Branch("egClust_E",&m_egClust_E);
+   m_tree->Branch("egClust_size",&m_egClust_size);
+   m_tree->Branch("egClust_eta",&m_egClust_eta);
+   m_tree->Branch("egClust_phi",&m_egClust_phi);
+   m_tree->Branch("egClust_frac51",&m_egClust_frac51);
+   m_tree->Branch("egClust_frac15",&m_egClust_frac15);
+   m_tree->Branch("egClust_e55",&m_egClust_e55);
+   m_tree->Branch("egClust_eMax",&m_egClust_eMax);
+   m_tree->Branch("egClust_matchDR",&m_egClust_matchDR);
+   m_tree->Branch("egClust_matchPID",&m_egClust_matchPID);
+   m_tree->Branch("egClust_tagged",&m_egClust_tagged);
+   m_tree->Branch("egClust_hcalIso",&m_egClust_hcalIso);
+   m_tree->Branch("egClust_SwissCross",&m_egClust_SwissCross); 
 
-   //m_tree->Branch("egClean_N",&m_nClusterEgamma,"egClean_N/i");
-   //m_tree->Branch("egClean_E",&m_egClean_E);
-   //m_tree->Branch("egClean_size",&m_egClean_size);
-   //m_tree->Branch("egClean_eta",&m_egClean_eta);
-   //m_tree->Branch("egClean_phi",&m_egClean_phi);
-   //m_tree->Branch("egClean_frac51",&m_egClean_frac51);
-   //m_tree->Branch("egClean_frac15",&m_egClean_frac15);
-   //m_tree->Branch("egClean_e55",&m_egClean_e55);
-   //m_tree->Branch("egClean_eMax",&m_egClean_eMax);
-   //m_tree->Branch("egClean_matchDR",&m_egClean_matchDR);
-   //m_tree->Branch("egClean_matchPID",&m_egClean_matchPID);
-   //m_tree->Branch("egClean_tagged",&m_egClean_tagged);
-   //m_tree->Branch("egClean_hcalIso",&m_egClean_hcalIso);
-   //m_tree->Branch("egClean_SwissCross",&m_egClean_SwissCross); 
+   m_tree->Branch("egClean_N",&m_nClusterEgamma,"egClean_N/i");
+   m_tree->Branch("egClean_E",&m_egClean_E);
+   m_tree->Branch("egClean_size",&m_egClean_size);
+   m_tree->Branch("egClean_eta",&m_egClean_eta);
+   m_tree->Branch("egClean_phi",&m_egClean_phi);
+   m_tree->Branch("egClean_frac51",&m_egClean_frac51);
+   m_tree->Branch("egClean_frac15",&m_egClean_frac15);
+   m_tree->Branch("egClean_e55",&m_egClean_e55);
+   m_tree->Branch("egClean_eMax",&m_egClean_eMax);
+   m_tree->Branch("egClean_matchDR",&m_egClean_matchDR);
+   m_tree->Branch("egClean_matchPID",&m_egClean_matchPID);
+   m_tree->Branch("egClean_tagged",&m_egClean_tagged);
+   m_tree->Branch("egClean_hcalIso",&m_egClean_hcalIso);
+   m_tree->Branch("egClean_SwissCross",&m_egClean_SwissCross); 
    
-  //m_tree->Branch("egComb_N",&m_nCombEgamma,"egComb_N/i");
-  //m_tree->Branch("egComb_E",&m_egComb_E);
-  //m_tree->Branch("egComb_size",&m_egComb_size);
-  //m_tree->Branch("egComb_eta",&m_egComb_eta);
-  //m_tree->Branch("egComb_phi",&m_egComb_phi);
-  //m_tree->Branch("egComb_frac51",&m_egComb_frac51);
-  //m_tree->Branch("egComb_frac15",&m_egComb_frac15);
-  //m_tree->Branch("egComb_e55",&m_egComb_e55);
-  //m_tree->Branch("egComb_eMax",&m_egComb_eMax);
-  //m_tree->Branch("egComb_e25Right",&m_egComb_e25Right);
-  //m_tree->Branch("egComb_e25Left",&m_egComb_e25Left);
-  //m_tree->Branch("egComb_matchDR",&m_egComb_matchDR);
-  //m_tree->Branch("egComb_matchPID",&m_egComb_matchPID);
-  //m_tree->Branch("egComb_tagged",&m_egComb_tagged);
-  //m_tree->Branch("egComb_hcalIso",&m_egComb_hcalIso);
-  //m_tree->Branch("egComb_SwissCross",&m_egComb_SwissCross); 
+  m_tree->Branch("egComb_N",&m_nCombEgamma,"egComb_N/i");
+  m_tree->Branch("egComb_E",&m_egComb_E);
+  m_tree->Branch("egComb_size",&m_egComb_size);
+  m_tree->Branch("egComb_eta",&m_egComb_eta);
+  m_tree->Branch("egComb_phi",&m_egComb_phi);
+  m_tree->Branch("egComb_frac51",&m_egComb_frac51);
+  m_tree->Branch("egComb_frac15",&m_egComb_frac15);
+  m_tree->Branch("egComb_e55",&m_egComb_e55);
+  m_tree->Branch("egComb_eMax",&m_egComb_eMax);
+  m_tree->Branch("egComb_e25Right",&m_egComb_e25Right);
+  m_tree->Branch("egComb_e25Left",&m_egComb_e25Left);
+  m_tree->Branch("egComb_matchDR",&m_egComb_matchDR);
+  m_tree->Branch("egComb_matchPID",&m_egComb_matchPID);
+  m_tree->Branch("egComb_tagged",&m_egComb_tagged);
+  m_tree->Branch("egComb_hcalIso",&m_egComb_hcalIso);
+   m_tree->Branch("egComb_SwissCross",&m_egComb_SwissCross); 
   
-   //m_tree->Branch("eeClean_N",&m_nCleanEE,"eeClean_N/i");
-   //m_tree->Branch("eeClean_E",&m_eeClean_E);
-   //m_tree->Branch("eeClean_size",&m_eeClean_size);
-   //m_tree->Branch("eeClean_eta",&m_eeClean_eta);
-   //m_tree->Branch("eeClean_phi",&m_eeClean_phi);
-   //m_tree->Branch("eeClean_frac51",&m_eeClean_frac51);
-   //m_tree->Branch("eeClean_frac15",&m_eeClean_frac15);
-   //m_tree->Branch("eeClean_eMax",&m_eeClean_eMax);
-   //m_tree->Branch("eeClean_e55",&m_eeClean_e55);
-   //m_tree->Branch("eeClean_matchDR",&m_eeClean_matchDR);
-   //m_tree->Branch("eeClean_matchPID",&m_eeClean_matchPID);
-   //m_tree->Branch("eeClean_tagged",&m_eeClean_tagged);
-   //m_tree->Branch("eeClean_hcalIso",&m_eeClean_hcalIso);
-   //m_tree->Branch("eeClean_SwissCross",&m_eeClean_SwissCross); 
+   m_tree->Branch("eeClean_N",&m_nCleanEE,"eeClean_N/i");
+   m_tree->Branch("eeClean_E",&m_eeClean_E);
+   m_tree->Branch("eeClean_size",&m_eeClean_size);
+   m_tree->Branch("eeClean_eta",&m_eeClean_eta);
+   m_tree->Branch("eeClean_phi",&m_eeClean_phi);
+   m_tree->Branch("eeClean_frac51",&m_eeClean_frac51);
+   m_tree->Branch("eeClean_frac15",&m_eeClean_frac15);
+   m_tree->Branch("eeClean_eMax",&m_eeClean_eMax);
+   m_tree->Branch("eeClean_e55",&m_eeClean_e55);
+   m_tree->Branch("eeClean_matchDR",&m_eeClean_matchDR);
+   m_tree->Branch("eeClean_matchPID",&m_eeClean_matchPID);
+   m_tree->Branch("eeClean_tagged",&m_eeClean_tagged);
+   m_tree->Branch("eeClean_hcalIso",&m_eeClean_hcalIso);
+   m_tree->Branch("eeClean_SwissCross",&m_eeClean_SwissCross); 
 
-   //m_tree->Branch("eeUnclean_N",&m_nUncleanEE,"eeUnclean_N/i");
-   //m_tree->Branch("eeUnclean_E",&m_eeUnclean_E);
-   //m_tree->Branch("eeUnclean_size",&m_eeUnclean_size);
-   //m_tree->Branch("eeUnclean_eta",&m_eeUnclean_eta);
-   //m_tree->Branch("eeUnclean_phi",&m_eeUnclean_phi);
-   //m_tree->Branch("eeUnclean_frac51",&m_eeUnclean_frac51);
-   //m_tree->Branch("eeUnclean_frac15",&m_eeUnclean_frac15);
-   //m_tree->Branch("eeUnclean_eMax",&m_eeUnclean_eMax);
-   //m_tree->Branch("eeUnclean_e55",&m_eeUnclean_e55);
-   //m_tree->Branch("eeUnclean_matchDR",&m_eeUnclean_matchDR);
-   //m_tree->Branch("eeUnclean_matchPID",&m_eeUnclean_matchPID);
-   //m_tree->Branch("eeUnclean_tagged",&m_eeUnclean_tagged);
-   //m_tree->Branch("eeUnclean_hcalIso",&m_eeUnclean_hcalIso);
-   //m_tree->Branch("eeUnclean_SwissCross",&m_eeUnclean_SwissCross); 
+   m_tree->Branch("eeUnclean_N",&m_nUncleanEE,"eeUnclean_N/i");
+   m_tree->Branch("eeUnclean_E",&m_eeUnclean_E);
+   m_tree->Branch("eeUnclean_size",&m_eeUnclean_size);
+   m_tree->Branch("eeUnclean_eta",&m_eeUnclean_eta);
+   m_tree->Branch("eeUnclean_phi",&m_eeUnclean_phi);
+   m_tree->Branch("eeUnclean_frac51",&m_eeUnclean_frac51);
+   m_tree->Branch("eeUnclean_frac15",&m_eeUnclean_frac15);
+   m_tree->Branch("eeUnclean_eMax",&m_eeUnclean_eMax);
+   m_tree->Branch("eeUnclean_e55",&m_eeUnclean_e55);
+   m_tree->Branch("eeUnclean_matchDR",&m_eeUnclean_matchDR);
+   m_tree->Branch("eeUnclean_matchPID",&m_eeUnclean_matchPID);
+   m_tree->Branch("eeUnclean_tagged",&m_eeUnclean_tagged);
+   m_tree->Branch("eeUnclean_hcalIso",&m_eeUnclean_hcalIso);
+   m_tree->Branch("eeUnclean_SwissCross",&m_eeUnclean_SwissCross); 
   
-  //m_tree->Branch("eeComb_N",&m_nCombEE,"eeComb_N/i");
-  //m_tree->Branch("eeComb_E",&m_eeComb_E);
-  //m_tree->Branch("eeComb_size",&m_eeComb_size);
-  //m_tree->Branch("eeComb_eta",&m_eeComb_eta);
-  //m_tree->Branch("eeComb_phi",&m_eeComb_phi);
-  //m_tree->Branch("eeComb_frac51",&m_eeComb_frac51);
-  //m_tree->Branch("eeComb_frac15",&m_eeComb_frac15);
-  //m_tree->Branch("eeComb_eMax",&m_eeComb_eMax);
-  //m_tree->Branch("eeComb_e55",&m_eeComb_e55);
-  //m_tree->Branch("eeComb_e25Left",&m_eeComb_e25Left);
-  //m_tree->Branch("eeComb_e25Right",&m_eeComb_e25Right);
-  //m_tree->Branch("eeComb_matchDR",&m_eeComb_matchDR);
-  //m_tree->Branch("eeComb_matchPID",&m_eeComb_matchPID);
-  //m_tree->Branch("eeComb_tagged",&m_eeComb_tagged);
-  //m_tree->Branch("eeComb_hcalIso",&m_eeComb_hcalIso);
-  //m_tree->Branch("eeComb_SwissCross",&m_eeComb_SwissCross); 
+  m_tree->Branch("eeComb_N",&m_nCombEE,"eeComb_N/i");
+  m_tree->Branch("eeComb_E",&m_eeComb_E);
+  m_tree->Branch("eeComb_size",&m_eeComb_size);
+  m_tree->Branch("eeComb_eta",&m_eeComb_eta);
+  m_tree->Branch("eeComb_phi",&m_eeComb_phi);
+  m_tree->Branch("eeComb_frac51",&m_eeComb_frac51);
+  m_tree->Branch("eeComb_frac15",&m_eeComb_frac15);
+  m_tree->Branch("eeComb_eMax",&m_eeComb_eMax);
+  m_tree->Branch("eeComb_e55",&m_eeComb_e55);
+  m_tree->Branch("eeComb_e25Left",&m_eeComb_e25Left);
+  m_tree->Branch("eeComb_e25Right",&m_eeComb_e25Right);
+  m_tree->Branch("eeComb_matchDR",&m_eeComb_matchDR);
+  m_tree->Branch("eeComb_matchPID",&m_eeComb_matchPID);
+  m_tree->Branch("eeComb_tagged",&m_eeComb_tagged);
+  m_tree->Branch("eeComb_hcalIso",&m_eeComb_hcalIso);
+   m_tree->Branch("eeComb_SwissCross",&m_eeComb_SwissCross); 
   
 //   if(_ClustHitOutput){
 //   m_tree->Branch("ehit_eta",&m_ehit_eta);
@@ -1761,15 +1713,14 @@ MonoNtupleDumper::beginJob()
 
   //_Tracker->beginJob(m_tree);
   
-  if(_EleJetPhoOutput){
+   if(_EleJetPhoOutput){
   m_tree->Branch("jet_N",&m_jet_N,"jet_N/i");
-  //m_tree->Branch("jet_E",&m_jet_E);
-  m_tree->Branch("jet_mass",&m_jet_mass);
-  //m_tree->Branch("jet_p",&m_jet_p);
+  m_tree->Branch("jet_E",&m_jet_E);
+  m_tree->Branch("jet_p",&m_jet_p);
   m_tree->Branch("jet_pt",&m_jet_pt);
-  //m_tree->Branch("jet_px",&m_jet_px);
-  //m_tree->Branch("jet_py",&m_jet_py);
-  //m_tree->Branch("jet_pz",&m_jet_pz);
+  m_tree->Branch("jet_px",&m_jet_px);
+  m_tree->Branch("jet_py",&m_jet_py);
+  m_tree->Branch("jet_pz",&m_jet_pz);
   m_tree->Branch("jet_eta",&m_jet_eta);
   m_tree->Branch("jet_phi",&m_jet_phi);
 //  m_tree->Branch("jet_matchDR",&m_jet_matchDR);
@@ -1778,48 +1729,48 @@ MonoNtupleDumper::beginJob()
 
   m_tree->Branch("pho_N",&m_pho_N,"pho_N/i");
   m_tree->Branch("pho_E",&m_pho_E);
-  //m_tree->Branch("pho_p",&m_pho_p);
+  m_tree->Branch("pho_p",&m_pho_p);
   m_tree->Branch("pho_pt",&m_pho_pt);
-  //m_tree->Branch("pho_px",&m_pho_px);
-  //m_tree->Branch("pho_py",&m_pho_py);
-  //m_tree->Branch("pho_pz",&m_pho_pz);
+  m_tree->Branch("pho_px",&m_pho_px);
+  m_tree->Branch("pho_py",&m_pho_py);
+  m_tree->Branch("pho_pz",&m_pho_pz);
   m_tree->Branch("pho_eta",&m_pho_eta);
   m_tree->Branch("pho_phi",&m_pho_phi);
-  //m_tree->Branch("pho_matchDR",&m_pho_matchDR);
-  m_tree->Branch("pho_tagged",&m_pho_tagged);
-  m_tree->Branch("pho_matchPID",&m_pho_matchPID);
+//  m_tree->Branch("pho_matchDR",&m_pho_matchDR);
+//  m_tree->Branch("pho_tagged",&m_pho_tagged);
+//  m_tree->Branch("pho_matchPID",&m_pho_matchPID);
 
-  //m_tree->Branch("ele_N",&m_ele_N,"ele_N/i");
-  //m_tree->Branch("ele_E",&m_ele_E);
-  //m_tree->Branch("ele_p",&m_ele_p);
-  //m_tree->Branch("ele_pt",&m_ele_pt);
-  //m_tree->Branch("ele_px",&m_ele_px);
-  //m_tree->Branch("ele_py",&m_ele_py);
-  //m_tree->Branch("ele_pz",&m_ele_pz);
-  //m_tree->Branch("ele_eta",&m_ele_eta);
-  //m_tree->Branch("ele_phi",&m_ele_phi);
+  m_tree->Branch("ele_N",&m_ele_N,"ele_N/i");
+  m_tree->Branch("ele_E",&m_ele_E);
+  m_tree->Branch("ele_p",&m_ele_p);
+  m_tree->Branch("ele_pt",&m_ele_pt);
+  m_tree->Branch("ele_px",&m_ele_px);
+  m_tree->Branch("ele_py",&m_ele_py);
+  m_tree->Branch("ele_pz",&m_ele_pz);
+  m_tree->Branch("ele_eta",&m_ele_eta);
+  m_tree->Branch("ele_phi",&m_ele_phi);
 //  m_tree->Branch("ele_matchDR",&m_ele_matchDR);
 //  m_tree->Branch("ele_tagged",&m_ele_tagged);
 //  m_tree->Branch("ele_matchPID",&m_ele_matchPID);
 
   //add by Lin 7 28 2021
 
-  //m_tree->Branch("pf_N",&m_pf_N,"pf_N/i");
-  //m_tree->Branch("pf_E",&m_pf_E);
-  //m_tree->Branch("pf_p",&m_pf_p);
-  //m_tree->Branch("pf_pt",&m_pf_pt);
-  //m_tree->Branch("pf_px",&m_pf_px);
-  //m_tree->Branch("pf_py",&m_pf_py);
-  //m_tree->Branch("pf_pz",&m_pf_pz);
-  //m_tree->Branch("pf_eta",&m_pf_eta);
-  //m_tree->Branch("pf_phi",&m_pf_phi);
-  //m_tree->Branch("pf_pdgId",&m_pf_pdgId);
-  //m_tree->Branch("pf_status",&m_pf_status);
+  m_tree->Branch("pf_N",&m_pf_N,"pf_N/i");
+  m_tree->Branch("pf_E",&m_pf_E);
+  m_tree->Branch("pf_p",&m_pf_p);
+  m_tree->Branch("pf_pt",&m_pf_pt);
+  m_tree->Branch("pf_px",&m_pf_px);
+  m_tree->Branch("pf_py",&m_pf_py);
+  m_tree->Branch("pf_pz",&m_pf_pz);
+  m_tree->Branch("pf_eta",&m_pf_eta);
+  m_tree->Branch("pf_phi",&m_pf_phi);
+  m_tree->Branch("pf_pdgId",&m_pf_pdgId);
+  m_tree->Branch("pf_status",&m_pf_status);
   }
 
   m_tree->Branch("mpt_pt",&m_mpt,"mpt_pt/D");
   m_tree->Branch("mpt_phi",&m_mpPhi,"mpt_phi/D");
- 
+
   m_tree->Branch("GenMET_pt",&m_GenMpt,"GenMET_pt/D");
   m_tree->Branch("GenMET_px",&m_GenMpx,"GenMET_px/D");
   m_tree->Branch("GenMET_py",&m_GenMpy,"GenMET_py/D");
@@ -1828,6 +1779,13 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("CaloMET_px",&m_CaloMpx,"CaloMET_px/D");
   m_tree->Branch("CaloMET_py",&m_CaloMpy,"CaloMET_py/D");
   m_tree->Branch("CaloMET_phi",&m_CaloMETPhi,"CaloMET_phi/D");
+
+  m_tree->Branch("PAT_mpt_pt",     &m_pat_mpt,  "PAT_mpt_pt/D");//PAT
+  m_tree->Branch("PAT_mpt_phi",    &m_pat_mpPhi,"PAT_mpt_phi/D");//PAT
+  m_tree->Branch("PAT_CaloMET_pt", &m_pat_CaloMpt,    "PAT_CaloMET_pt/D");
+  m_tree->Branch("PAT_CaloMET_px", &m_pat_CaloMpx,    "PAT_CaloMET_px/D");
+  m_tree->Branch("PAT_CaloMET_py", &m_pat_CaloMpy,    "PAT_CaloMET_py/D");
+  m_tree->Branch("PAT_CaloMET_phi",&m_pat_CaloMETPhi,"PAT_CaloMET_phi/D");
 
  
   if ( !m_isData ) {
@@ -1901,8 +1859,6 @@ void MonoNtupleDumper::clear()
   m_event = 0;
   
   m_NPV = 0;
-
-  m_nTrueInteractions = 0;
   
   m_nClusters = 0;
   m_clust_E.clear();
@@ -1941,11 +1897,11 @@ void MonoNtupleDumper::clear()
   m_egClust_frac51.clear();
   m_egClust_frac15.clear();
   m_egClust_e55.clear();
-  //m_egClust_e2x5Right.clear();
-  //m_egClust_e2x5Left.clear();
-  //m_egClust_e2x5Top.clear();
-  //m_egClust_e2x5Bottom.clear();
-  //m_egClust_e2x5Max.clear();
+  m_egClust_e2x5Right.clear();
+  m_egClust_e2x5Left.clear();
+  m_egClust_e2x5Top.clear();
+  m_egClust_e2x5Bottom.clear();
+  m_egClust_e2x5Max.clear();
   m_egClust_eLeft.clear();
   m_egClust_eRight.clear();
   m_egClust_eTop.clear();
@@ -1965,11 +1921,11 @@ void MonoNtupleDumper::clear()
   m_egClean_frac51.clear();
   m_egClean_frac15.clear();
   m_egClean_e55.clear();
-  //m_egClean_e2x5Right.clear();
-  //m_egClean_e2x5Left.clear();
-  //m_egClean_e2x5Top.clear();
-  //m_egClean_e2x5Bottom.clear();
-  //m_egClean_e2x5Max.clear();
+  m_egClean_e2x5Right.clear();
+  m_egClean_e2x5Left.clear();
+  m_egClean_e2x5Top.clear();
+  m_egClean_e2x5Bottom.clear();
+  m_egClean_e2x5Max.clear();
   m_egClean_eLeft.clear();
   m_egClean_eRight.clear();
   m_egClean_eTop.clear();
@@ -1989,11 +1945,11 @@ void MonoNtupleDumper::clear()
   m_egComb_frac51.clear();
   m_egComb_frac15.clear();
   m_egComb_e55.clear();
-  //m_egComb_e2x5Right.clear();
-  //m_egComb_e2x5Left.clear();
-  //m_egComb_e2x5Top.clear();
-  //m_egComb_e2x5Bottom.clear();
-  //m_egComb_e2x5Max.clear();
+  m_egComb_e2x5Right.clear();
+  m_egComb_e2x5Left.clear();
+  m_egComb_e2x5Top.clear();
+  m_egComb_e2x5Bottom.clear();
+  m_egComb_e2x5Max.clear();
   m_egComb_eLeft.clear();
   m_egComb_eRight.clear();
   m_egComb_eTop.clear();
@@ -2017,11 +1973,11 @@ void MonoNtupleDumper::clear()
   m_eeClean_frac15.clear();
   m_eeClean_eMax.clear();
   m_eeClean_e55.clear();
-  //m_eeClean_e2x5Right.clear();
-  //m_eeClean_e2x5Left.clear();
-  //m_eeClean_e2x5Top.clear();
-  //m_eeClean_e2x5Bottom.clear();
-  //m_eeClean_e2x5Max.clear();
+  m_eeClean_e2x5Right.clear();
+  m_eeClean_e2x5Left.clear();
+  m_eeClean_e2x5Top.clear();
+  m_eeClean_e2x5Bottom.clear();
+  m_eeClean_e2x5Max.clear();
   m_eeClean_eLeft.clear();
   m_eeClean_eRight.clear();
   m_eeClean_eTop.clear();
@@ -2041,11 +1997,11 @@ void MonoNtupleDumper::clear()
   m_eeUnclean_frac15.clear();
   m_eeUnclean_eMax.clear();
   m_eeUnclean_e55.clear();
-  //m_eeUnclean_e2x5Right.clear();
-  //m_eeUnclean_e2x5Left.clear();
-  //m_eeUnclean_e2x5Top.clear();
-  //m_eeUnclean_e2x5Bottom.clear();
-  //m_eeUnclean_e2x5Max.clear();
+  m_eeUnclean_e2x5Right.clear();
+  m_eeUnclean_e2x5Left.clear();
+  m_eeUnclean_e2x5Top.clear();
+  m_eeUnclean_e2x5Bottom.clear();
+  m_eeUnclean_e2x5Max.clear();
   m_eeUnclean_eLeft.clear();
   m_eeUnclean_eRight.clear();
   m_eeUnclean_eTop.clear();
@@ -2065,11 +2021,11 @@ void MonoNtupleDumper::clear()
   m_eeComb_frac15.clear();
   m_eeComb_eMax.clear();
   m_eeComb_e55.clear();
-  //m_eeComb_e2x5Right.clear();
-  //m_eeComb_e2x5Left.clear();
-  //m_eeComb_e2x5Top.clear();
-  //m_eeComb_e2x5Bottom.clear();
-  //m_eeComb_e2x5Max.clear();
+  m_eeComb_e2x5Right.clear();
+  m_eeComb_e2x5Left.clear();
+  m_eeComb_e2x5Top.clear();
+  m_eeComb_e2x5Bottom.clear();
+  m_eeComb_e2x5Max.clear();
   m_eeComb_eLeft.clear();
   m_eeComb_eRight.clear();
   m_eeComb_eTop.clear();
@@ -2095,7 +2051,6 @@ void MonoNtupleDumper::clear()
   // Jet information
   m_jet_N = 0;
   m_jet_E.clear();
-  m_jet_mass.clear();
   m_jet_p.clear();
   m_jet_pt.clear();
   m_jet_px.clear();
@@ -2155,6 +2110,13 @@ void MonoNtupleDumper::clear()
  m_CaloMpx=0.;
  m_CaloMpy=0.;
  m_CaloMETPhi=0.;
+
+  m_pat_mpt=0.;
+  m_pat_mpPhi=0.;
+  m_pat_CaloMpt=0.;
+  m_pat_CaloMpx=0.;
+  m_pat_CaloMpy=0.;
+  m_pat_CaloMETPhi=0.;
  
   m_mono_p = 0.;
   m_mono_eta = 0.;
@@ -2407,9 +2369,9 @@ int getPho175TrigCode(const float eta,const float phi,const trigger::TriggerEven
   //the filters of pho175 in order
   int retCode=0;
   const std::vector<std::string> hltFilters = {"hltL1sSingleEGNonIsoOrWithJetAndTau",
-					       "hltEGL1SingleEGNonIsoOrWithJetAndTauFilter",
-					       "hltEG175EtFilter",
-					       "hltEG175HEFilter"};
+                 "hltEGL1SingleEGNonIsoOrWithJetAndTauFilter",
+                 "hltEG175EtFilter",
+                 "hltEG175HEFilter"};
   for(size_t filterNr=0;filterNr<hltFilters.size();filterNr++){
     if(passFilter(eta,phi,trigEvent,hltFilters[filterNr],maxDR2)) retCode=filterNr+1;
   }
@@ -2437,38 +2399,5 @@ bool evtPassesPho175L1(const trigger::TriggerEvent& trigEvent)
   trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
   if(filterIndex<trigEvent.sizeFilters()){
     return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-
-bool evtPassesPho200L1(const trigger::TriggerEvent& trigEvent)
-{
-  //the filters of pho175 in order
-  edm::InputTag filterTag("hltL1sSingleEGNonIsoOrWithJetAndTau","",trigEvent.usedProcessName());
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-
-
-bool evtPassesPFMET250L1(const trigger::TriggerEvent& trigEvent)
-{
-  //the filters of pho175 in order
-  edm::InputTag filterTag("hltL1sAllETMHFSeeds","",trigEvent.usedProcessName());
-  //Filter for 2017: hltL1sAllETMHadSeeds
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-
-bool evtPassesPFMET300L1(const trigger::TriggerEvent& trigEvent)
-{
-  //the filters of pho175 in order
-  edm::InputTag filterTag("hltL1sETM60IorETM70IorETM80IorETM90IorETM100IorETM120","",trigEvent.usedProcessName());
-  //hltL1sAllETMHadSeeds
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
+  } else return false;
 }

@@ -1,13 +1,11 @@
 # Monopole-Script
 These files are in lxplus.  
-CMS release version : CMSSW_10_6_23   
+CMS release version : CMSSW_10_6_20   
 Set up enviroment before running the script  
 ```
-cmsrel CMSSW_10_6_23  
-cd CMSSW_10_6_23/src  
-git clone git@github.com:sun51027/Monopole-Script.git  
-mv Monopole-Script/* . 
-rm -rf SimGeneral 
+cmsrel CMSSW_10_6_20  
+cd CMSSW_10_6_20/src  
+https://github.com/MonopolesCBPFUERJ/Monopoles_Ntuple_Production.git
 scram b -j 4
 ``` 
 Note: If you just want to generate Ntuple rather than study systematic uncertainty, you have to remove "SimGeneral". If you want to study systematic uncertainty, please see Systematic Uncertainty part.
@@ -53,6 +51,12 @@ Submit jobs:
 Check the status of your jobs:
 
 `condor_q`  
+
+
+**Submit jobs on CRAB**
+
+In the file v2_crab_config.py you should find all the paths for the MCs (Central Production) and for the datasets (EGamma, MET)
+
 
 ## Systematic Uncertainty
 

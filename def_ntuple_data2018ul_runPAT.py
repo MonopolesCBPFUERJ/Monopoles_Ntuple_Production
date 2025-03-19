@@ -1,5 +1,4 @@
 import FWCore.ParameterSet.Config as cms
-import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.ProcessModifiers.run2_miniAOD_UL_preSummer20_cff import run2_miniAOD_UL_preSummer20
@@ -19,28 +18,14 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(50)
 )
 
-
-options = VarParsing.VarParsing('analysis')
-# Prevent re-registration of the variable by checking if it already exists
-if not hasattr(options, 'inputFiles'):
-    options.register('inputFiles',
-                     '',
-                     VarParsing.VarParsing.multiplicity.list,
-                     VarParsing.VarParsing.varType.string,
-                     "Input files")
-
-options.parseArguments()
-
-
+# Input source
 process.source = cms.Source("PoolSource",
-    #fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/t/tmenezes/work/public/METcorrected_MonoNtuple_Production/CMSSW_10_6_23/src/000B37F0-45AA-814D-A93C-0F6815AC4F74.root'),
-    fileNames = cms.untracked.vstring(options.inputFiles),
+    fileNames = cms.untracked.vstring('file:7F10EF9D-BDF9-074B-8216-834602DE11C3.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
-
 
 process.options = cms.untracked.PSet(
 
@@ -51,8 +36,7 @@ process.options = cms.untracked.PSet(
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v35', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v33', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v35', '')
 
 # Path and EndPath definitions
 process.Flag_trackingFailureFilter = cms.Path(process.goodVertices+process.trackingFailureFilter)
@@ -124,8 +108,7 @@ import FWCore.ParameterSet.Types as CfgTypes
 process.Monopoler = cms.EDAnalyzer(
     'MonoNtupleDumper',
     isData = cms.bool(True),
-    Output = cms.string(options.outputFile),
-    #Output = cms.string("14Mar_test.root"),
+    Output = cms.string("DataTest.root"),
     TriggerResults = cms.InputTag("TriggerResults","","HLT"),
     TriggerEvent = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
     GeneratorTag = cms.InputTag("genParticles",""),
@@ -146,7 +129,6 @@ process.Monopoler = cms.EDAnalyzer(
     eeCleanTag = cms.InputTag("multi5x5SuperClusters","multi5x5EndcapBasicClusters"),
     eeUncleanTag = cms.InputTag("multi5x5SuperClusters","uncleanOnlyMulti5x5EndcapBasicClusters") ,
     eeCombTag = cms.InputTag("uncleanEERecovered","uncleanEndcapBasicClusters"),
-    pileupInfoTag = cms.InputTag("addPileupInfo"),    
     PatJetTag = cms.InputTag("slimmedJets"),
     PatMETTag = cms.InputTag("slimmedMETs"),
     StripSeedLength = cms.uint32(3),
@@ -165,9 +147,6 @@ process.ecalCombine_step = cms.Path(process.uncleanSCRecovered)
 process.ecalCombineEE_step = cms.Path(process.uncleanEERecovered)
 process.refit_step = cms.Path(process.MeasurementTrackerEvent * process.TrackRefitter)
 process.mpl_step = cms.Path(process.Monopoler)
-
-
-
 
 # Schedule definition
 

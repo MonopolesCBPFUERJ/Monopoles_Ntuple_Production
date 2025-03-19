@@ -20,10 +20,6 @@
 //
 // July 2021 : Lin Shih:fix HepMC -> GenParticle
 //      
-// 2025: Matheus added pileUp information and new triggers for TRG Eff
-//
-// 2025: Thales included the Type-1 MET corrected via pat;
-// 2025: Added L1 functions
 //
 // system include files
 #include <vector>
@@ -151,9 +147,6 @@ bool passFilter(const float eta,const float phi,const trigger::TriggerEvent& tri
 int getPho175TrigCode(const float eta,const float phi,const trigger::TriggerEvent& trigEvent,const float maxDR2=0.2*0.2);
 int getPho200TrigCode(const float eta,const float phi,const trigger::TriggerEvent& trigEvent,const float maxDR2=0.2*0.2);
 bool evtPassesPho175L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPho200L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPFMET250L1(const trigger::TriggerEvent& trigEvent);
-bool evtPassesPFMET300L1(const trigger::TriggerEvent& trigEvent);
 
 #define DEBUG
 
@@ -232,10 +225,6 @@ private:
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeUnclean;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeComb;
 
-  // Pileup 
-  edm::EDGetTokenT<std::vector<PileupSummaryInfo>> m_puInfoToken;
-
-
   // PAT objects
   edm::EDGetTokenT< std::vector<pat::Jet>> m_Tag_PatJets;
   edm::EDGetTokenT< std::vector<pat::MET>> m_Tag_PatMETs;
@@ -283,11 +272,6 @@ private:
   bool passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_;
   bool passHLT_CaloMET300_HBHECleaned_;
 
-  // For Trigger Efficiency
-  bool passHLT_IsoMu24_;
-  bool passHLT_Ele27_WPTight_Gsf_;
-  bool passHLT_PFJet500_;
-
   //
   TTree * m_tree;
   
@@ -305,10 +289,7 @@ private:
   std::vector<bool> m_trigResults;
   std::vector<std::string> m_trigNames;  
   bool m_evtPassesPho175L1;
-  bool m_evtPassesPho200L1;
-  bool m_evtPassesPFMET250L1;
-  bool m_evtPassesPFMET300L1;
- 
+  
   // Ecal Observable information
   unsigned m_nClusters;
   std::vector<double> m_clust_E;
@@ -588,8 +569,6 @@ private:
   std::vector<int> m_pf_pdgId;
   std::vector<int> m_pf_status;
 
-  // Pileup
-  double m_nTrueInteractions;
   
   // MET information
   double m_mpt;
@@ -605,7 +584,6 @@ private:
   double m_CaloMpy;
   double m_CaloMETPhi;
 
-  // MET from PAT
   double m_pat_mpt;
   double m_pat_mpPhi;
   double m_pat_CaloMpt;
@@ -732,7 +710,6 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_Tag_eeClean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCleanTag") ) )
   ,m_Tag_eeUnclean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeUncleanTag") ) )
   ,m_Tag_eeComb( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCombTag") ) )
-  ,m_puInfoToken( consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupInfoTag") ))
   ,m_Tag_PatJets( consumes< std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("PatJetTag")))
   ,m_Tag_PatMETs( consumes< std::vector<pat::MET> >(iConfig.getParameter<edm::InputTag>("PatMETTag")))
   ,m_isData(iConfig.getParameter<bool>("isData") )
@@ -767,22 +744,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   std::cout<<"Start ntuple production"<<std::endl;
   std::cout<<"PASS: EventSetup"<<std::endl;
 #endif
- 
-
-
-  // Pileup - Implementation
-  edm::Handle<std::vector<PileupSummaryInfo>> puInfoH;
-  iEvent.getByToken(m_puInfoToken, puInfoH);
-  
-  m_nTrueInteractions = -1.0;
-  if (puInfoH.isValid()) {
-  for (auto & PVI : *puInfoH) {
-      if (PVI.getBunchCrossing() == 0) {
-        m_nTrueInteractions = PVI.getTrueNumInteractions();
-        break;
-       }
-    }
- }
   
   ////////////////////////////////////
   // get a handle on the trigger results
@@ -814,11 +775,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ = 0;
   passHLT_CaloMET300_HBHECleaned_ = 0;
 
-  // For trigger efficiency
-  passHLT_IsoMu24_ = 0;
-  passHLT_Ele27_WPTight_Gsf_ = 0;
-  passHLT_PFJet500_ = 0;
-
   for (size_t i = 0; i < trigNames.size(); ++i) {
     const std::string &name = trigNames.triggerName(i);
     bool fired = triggerResults.accept(i);
@@ -836,10 +792,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     passHLT_PFMET200_HBHE_BeamHaloCleaned_ |= name.find("HLT_PFMET200_HBHE_BeamHaloCleaned_v") != std::string::npos;
     passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ |= name.find("HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_v") != std::string::npos;
     passHLT_CaloMET300_HBHECleaned_ |= name.find("HLT_CaloMET300_HBHECleaned_v") != std::string::npos;
-    
-    passHLT_IsoMu24_ |= name.find("HLT_IsoMu24_v") != std::string::npos;
-    passHLT_Ele27_WPTight_Gsf_ |= name.find("HLT_Ele27_WPTight_Gsf_v") != std::string::npos;
-    passHLT_PFJet500_ |= name.find("HLT_PFJet500_v") != std::string::npos;
   }
 #ifdef DEBUG
   cout<< "HLT_Photon175 = " <<passHLT_Photon175_<<endl;
@@ -854,11 +806,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   cout<< "HLT_PFMET200_HBHE_BeamHaloCleaned = " <<passHLT_PFMET200_HBHE_BeamHaloCleaned_<<endl;
   cout<< "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned = " <<passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_<<endl;
   cout<< "HLT_CaloMET300_HBHECleaned = " <<passHLT_CaloMET300_HBHECleaned_<<endl;
-  cout<< "HLT_IsoMu24 = " <<passHLT_IsoMu24_<<endl;
-  cout<< "HLT_Ele27_WPTight_Gsf = " <<passHLT_Ele27_WPTight_Gsf_<<endl;
-  cout<< "HLT_PFJet500 = " <<passHLT_PFJet500_<<endl;
-
-
 #endif
 
   // get a handle on the trigger results                                                    
@@ -903,10 +850,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     //    cout << m_trigNames << " " << HLTR->accept(HLT_Photon175_v) << endl; 
   }
   m_evtPassesPho175L1 = evtPassesPho175L1(*m_trigEventHandle);
-  m_evtPassesPho200L1 = evtPassesPho200L1(*m_trigEventHandle);
-  m_evtPassesPFMET250L1 = evtPassesPFMET250L1(*m_trigEventHandle);
-  m_evtPassesPFMET300L1 = evtPassesPFMET300L1(*m_trigEventHandle);
-  
+ 
   /*
     Handle<edm::TriggerResults> triggerResultsHandle; //our trigger result object
     edm::InputTag trigResultsTag("TriggerResults","","HLT"); //make sure have correct process on MC
@@ -1456,7 +1400,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   Handle< vector<reco::PFCandidate>> pfCandidate;
   iEvent.getByToken(m_Tag_PF,pfCandidate);
   const unsigned nPFCandidate = pfCandidate->size();
- /* for (unsigned  i=0; i != nPFCandidate; i++){
+  for (unsigned  i=0; i != nPFCandidate; i++){
 
     const reco::PFCandidate &pf = (*pfCandidate)[i];
     m_pf_E.push_back( pf.energy() );
@@ -1470,22 +1414,19 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     // reco::PFCandidate::ParticleType & type = (*pfCandidate)[i];
     m_pf_pdgId.push_back( pf.particleId());
     m_pf_status.push_back( pf.status());
-  } */
+  }
   m_pf_N = nPFCandidate;
 
   // get MET collection
   Handle<std::vector<reco::PFMET> > met;
   iEvent.getByToken(m_Tag_MET,met);
-  //assert (met[0].pt() > 150); // ALSO DO WITH PAT MET
 
   Handle<std::vector<reco::CaloMET> > Calomet;
   iEvent.getByToken(m_Tag_CaloMET,Calomet);
-  
+
   // fill MET Branches
   m_mpt = (*met)[0].pt();
   m_mpPhi = (*met)[0].phi();
- 
-
 
   m_CaloMpt = (*Calomet)[0].pt();
   m_CaloMpx = (*Calomet)[0].px();
@@ -1494,18 +1435,10 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 
   Handle<std::vector<pat::MET> > patmet;
   iEvent.getByToken(m_Tag_PatMETs,patmet);
- 
-// Such filtering should be only applied when running on MET DATA 
-  if (patmet->at(0).pt() <= 150) {
-     edm::LogInfo("LowMET") << "MET pt = " << patmet->at(0).pt() << " (below threshold)";
-     return; // Skip this event as it doesn't meet the threshold
-  }  
-
 
   // fill MET Branches
   m_pat_mpt = (*patmet)[0].pt();
   m_pat_mpPhi = (*patmet)[0].phi();
-
 
   m_pat_CaloMpt = ((*patmet)[0]).caloMETPt();
   m_pat_CaloMpx = ((*patmet)[0]).caloMETP2().px;
@@ -1620,17 +1553,9 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("passHLT_PFMET200_HBHE_BeamHaloCleaned" , &passHLT_PFMET200_HBHE_BeamHaloCleaned_ , "passHLT_PFMET200_HBHE_BeamHaloCleaned/O");
   m_tree->Branch("passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned" , &passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned_ , "passHLT_PFMETTypeOne200_HBHE_BeamHaloCleaned/O");
   m_tree->Branch("passHLT_CaloMET300_HBHECleaned" , &passHLT_CaloMET300_HBHECleaned_ , "passHLT_CaloMET300_HBHECleaned/O"); 
-  // trigger efficiency paths
-  m_tree->Branch("passHLT_IsoMu24" , &passHLT_IsoMu24_ , "passHLT_IsoMu24/O");
-  m_tree->Branch("passHLT_Ele27_WPTight_Gsf" , &passHLT_Ele27_WPTight_Gsf_ , "passHLT_Ele27_WPTight_Gsf/O");
-  m_tree->Branch("passHLT_PFJet500" , &passHLT_PFJet500_ , "passHLT_PFJet500/O");
-
   //L1
   m_tree->Branch("evtPassesPho175L1" , &m_evtPassesPho175L1);
-  m_tree->Branch("evtPassesPho200L1" , &m_evtPassesPho200L1);
-  m_tree->Branch("evtPassesPFMET250L1" , &m_evtPassesPFMET250L1);
-  m_tree->Branch("evtPassesPFMET300L1" , &m_evtPassesPFMET300L1);
-  
+
   // combined candidates
   m_tree->Branch("cand_N",&m_nCandidates,"cand_N/i");
   m_tree->Branch("cand_dist",&m_candDist);
@@ -1776,15 +1701,15 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("eeComb_hcalIso",&m_eeComb_hcalIso);
    m_tree->Branch("eeComb_SwissCross",&m_eeComb_SwissCross); 
   
-   if(_ClustHitOutput){
-   m_tree->Branch("ehit_eta",&m_ehit_eta);
-   m_tree->Branch("ehit_phi",&m_ehit_phi);
-   m_tree->Branch("ehit_time",&m_ehit_time);
-   m_tree->Branch("ehit_E",&m_ehit_energy);
-   m_tree->Branch("ehit_kWeird",&m_ehit_kWeird);
-   m_tree->Branch("ehit_kDiWeird",&m_ehit_kDiWeird);
-   m_tree->Branch("ehit_flag",&m_ehit_flag);
-   }
+//   if(_ClustHitOutput){
+//   m_tree->Branch("ehit_eta",&m_ehit_eta);
+//   m_tree->Branch("ehit_phi",&m_ehit_phi);
+//   m_tree->Branch("ehit_time",&m_ehit_time);
+//   m_tree->Branch("ehit_E",&m_ehit_energy);
+//   m_tree->Branch("ehit_kWeird",&m_ehit_kWeird);
+//   m_tree->Branch("ehit_kDiWeird",&m_ehit_kDiWeird);
+//   m_tree->Branch("ehit_flag",&m_ehit_flag);
+//   }
 
   //_Tracker->beginJob(m_tree);
   
@@ -2476,35 +2401,3 @@ bool evtPassesPho175L1(const trigger::TriggerEvent& trigEvent)
     return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
   } else return false;
 }
-
-bool evtPassesPho200L1(const trigger::TriggerEvent& trigEvent)
-{
-  // Filters for pho200 
-  edm::InputTag filterTag("hltL1sSingleEGNonIsoOrWithJetAndTau","",trigEvent.usedProcessName());
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-
-bool evtPassesPFMET250L1(const trigger::TriggerEvent& trigEvent)
-{
-  edm::InputTag filterTag("hltL1sAllETMHFSeeds","",trigEvent.usedProcessName());
-  //Filter for 2017: hltL1sAllETMHadSeeds
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-
-
-bool evtPassesPFMET300L1(const trigger::TriggerEvent& trigEvent)
-{
-  edm::InputTag filterTag("hltL1sETM60IorETM70IorETM80IorETM90IorETM100IorETM120","",trigEvent.usedProcessName());  
-  //hltL1sAllETMHadSeeds
-  trigger::size_type filterIndex = trigEvent.filterIndex(filterTag); 
-  if(filterIndex<trigEvent.sizeFilters()){
-    return trigEvent.filterKeys(filterIndex).size()>=1;//at least 1 object to pass
-  } else return false;                    
-}
-

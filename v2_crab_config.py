@@ -9,13 +9,13 @@ import datetime
 import re
 
 # Defina o ano e o tipo de dados aqui
-year = '2016APV'            # Defina o ano aqui
-data_type = 'DATA'       # Use 'DATA' para dados reais ou 'MC' para Monte Carlo
+year = '2017'            # Defina o ano aqui
+data_type = 'MC'       # Use 'DATA' para dados reais ou 'MC' para Monte Carlo
 
 config = config()
 
 config.section_("General")
-config.General.workArea = '17Feb_METReview_crab_EXOMONOPOLE_{data_type}_{year}/{era}'.format(data_type=data_type, year=year, era='{era}')
+config.General.workArea = '18MarMETcorrected_MM_{data_type}_{year}/{era}'.format(data_type=data_type, year=year, era='{era}')
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
@@ -24,16 +24,17 @@ config.JobType.pluginName = 'Analysis'
 
 # Ajuste o psetName conforme necessário para DATA ou MC
 if data_type == 'DATA':
-    config.JobType.psetName = 'ntuple_mc_2018_forData_14Feb_cfg.py'
+    config.JobType.psetName = "ntuple_data2018ul_runPAT.py"
+    #config.JobType.psetName = 'ntuple_mc_2018_forData_14Feb_cfg.py'
 elif data_type == 'MC':
     if year == '2016':
         config.JobType.psetName = 'ntuple_mc_2016_cfg_METFilter.py'
     elif year == '2016APV':
         config.JobType.psetName = 'ntuple_mc_2016APV_cfg_METFilter.py'
     elif year == '2017':
-        config.JobType.psetName = 'ntuple_mc_2017_cfg_METFilter.py'
+        config.JobType.psetName = 'ntuple_MC2017ul_runPAT.py'
     elif year == '2018':
-        config.JobType.psetName = 'ntuple_mc_2018_cfg_METFilter.py'
+        config.JobType.psetName = 'ntuple_MC2018ul_runPAT.py'
     else:
         raise ValueError("Ano inválido. Escolha '2016', '2016APV', '2017' ou '2018'.")
 else:
@@ -70,9 +71,9 @@ datasets_2016_MONO = [
     #'/SinglePhoton/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
     #'/SinglePhoton/Run2016G-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
     #'/SinglePhoton/Run2016H-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
-    '/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
-    '/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
-    '/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER'
+    #'/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
+    #'/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
+    #'/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER'
 ]
 
 datasets_MC_2016 = [
@@ -124,7 +125,7 @@ datasets_2016_apv_MONO = [
     #'/SinglePhoton/Run2016E-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
     #'/SinglePhoton/Run2016F-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
     #'/MET/Run2016B-EXOMONOPOLE-21Feb2020_ver2_UL201_HIPM-v1/USER',
-    '/MET/Run2016C-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
+    #'/MET/Run2016C-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
     #'/MET/Run2016D-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
     #'/MET/Run2016E-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER',
     #'/MET/Run2016F-EXOMONOPOLE-21Feb2020_UL2016_HIPM-v1/USER'
@@ -228,10 +229,10 @@ datasets_2018_MONO = [
     #'/EGamma/Run2018B-EXOMONOPOLE-12Nov2019_UL2018-v2/USER',
     #'/EGamma/Run2018C-EXOMONOPOLE-12Nov2019_UL2018-v2/USER',
     #'/EGamma/Run2018D-EXOMONOPOLE-12Nov2019_UL2018-v6/USER',
-    '/MET/Run2018A-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER',
-    '/MET/Run2018B-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER',
+    #'/MET/Run2018A-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER',
+    #'/MET/Run2018B-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER',
     '/MET/Run2018C-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER',
-    '/MET/Run2018D-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER'
+    #'/MET/Run2018D-EXOMONOPOLE-12Nov2019_UL2018_rsb-v1/USER'
 ]
 
 
@@ -315,7 +316,7 @@ elif data_type == 'MC':
     elif year == '2017':
         datasets = datasets_MC_2017
     elif year == '2018':
-        datasets = first_datasets_MC_2018
+        datasets = datasets_MC_2018
     else:
         raise ValueError("Datasets MC não disponíveis para o ano selecionado.")
     lumi_mask = None  # Não é necessário para MC
@@ -349,7 +350,7 @@ for dataset in datasets:
     crab_config = Configuration()
     crab_config.section_("General")
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    crab_config.General.requestName = '14Feb_EXOMETReview_{data_type}_{year}_{era}'.format(data_type=data_type, year=year, era=era)
+    crab_config.General.requestName = 'crab_{data_type}_{year}_{era}'.format(data_type=data_type, year=year, era=era)
 
     crab_config.General.workArea = config.General.workArea.format(data_type=data_type, year=year, era=era)
     crab_config.General.transferOutputs = config.General.transferOutputs
@@ -372,7 +373,7 @@ for dataset in datasets:
     #crab_config.Data.totalUnits = config.Data.totalUnits
     crab_config.Data.publication = config.Data.publication
     crab_config.Data.outputDatasetTag = '{data_type}_{year}'.format(data_type=data_type, year=year)
-    crab_config.Data.outLFNDirBase = '/store/user/tmenezes/Feb_EXOMETReview_MagneticMonopole_{data_type}_{year}/{era}/'.format(data_type=data_type, year=year, era=era)
+    crab_config.Data.outLFNDirBase = '/store/user/tmenezes/MM_METcorrected_{data_type}_{year}/{era}/'.format(data_type=data_type, year=year, era=era)
 
     if data_type == 'DATA':
         crab_config.Data.lumiMask = lumi_mask

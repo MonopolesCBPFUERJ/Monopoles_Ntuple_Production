@@ -528,6 +528,9 @@ private:
   std::vector<double> m_ehit_flag;
   std::vector<double> m_ehit_kWeird;
   std::vector<double> m_ehit_kDiWeird;
+
+  std::vector<double> m_mono_ehit_time;
+  std::vector<double> m_test_ehit_time;
   
   // Jet information
   unsigned m_jet_N;
@@ -1008,8 +1011,28 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
     m_ehit_flag.push_back( (*itHit).recoFlag() );
 
+    if ((*itHit).energy() > 4.0) {
+      m_test_ehit_time.push_back( (*itHit).time() );
+
+    }
+
+
+    if ((*itHit).energy() > 200.0) {
+      m_mono_ehit_time.push_back( (*itHit).time() );
+
+    }
+
+
+
   }
   //*/
+
+
+
+
+
+
+
 
   // get BasicCluster Collection
   Handle<BasicClusterCollection> bClusters;
@@ -1178,6 +1201,35 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     }
   }
   m_nCombEgamma = nClusterCount;
+
+  for (const auto& cluster : *combClusters) {
+    // Loop over hits and fractions
+    for (const auto& hitFractionPair : cluster.hitsAndFractions()) {
+      const DetId& detid = hitFractionPair.first;
+      float fraction = hitFractionPair.second;
+
+      const EcalRecHit* recHit = nullptr;
+
+      // Check if the hit is from the EB or EE
+      if (detid.subdetId() == EcalBarrel) {
+          auto it = ecalRecHits->find(detid);  // Iterator to the RecHit
+          if (it != ecalRecHits->end()) {
+              recHit = &(*it);  // Dereference the iterator and take the address
+          }
+      } else if (detid.subdetId() == EcalEndcap) {
+          auto it = eeRecHits->find(detid);  // Iterator to the RecHit
+          if (it != eeRecHits->end()) {
+              recHit = &(*it);  // Dereference the iterator and take the address
+          }
+      }                                 
+    }
+  }
+  
+  //Handle<EBRecHitCollection > ecalRecHits;
+  //Handle<EERecHitCollection > eeRecHits;
+
+
+
 
   //
   // ------------- EE clusters ----------------------
@@ -1495,11 +1547,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   Handle<std::vector<pat::MET> > patmet;
   iEvent.getByToken(m_Tag_PatMETs,patmet);
  
-// Such filtering should be only applied when running on MET DATA 
-  if (patmet->at(0).pt() <= 150) {
-     edm::LogInfo("LowMET") << "MET pt = " << patmet->at(0).pt() << " (below threshold)";
-     return; // Skip this event as it doesn't meet the threshold
-  }  
+// Such filtering should be only applied when running on DATA 
+ //if (patmet->at(0).pt() <= 150) {
+  //   edm::LogInfo("LowMET") << "MET pt = " << patmet->at(0).pt() << " (below threshold)";
+  //   return; // Skip this event as it doesn't meet the threshold
+  //}  
 
 
   // fill MET Branches
@@ -1780,6 +1832,8 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ehit_eta",&m_ehit_eta);
    m_tree->Branch("ehit_phi",&m_ehit_phi);
    m_tree->Branch("ehit_time",&m_ehit_time);
+   m_tree->Branch("mono_ehit_time",&m_mono_ehit_time); 
+   m_tree->Branch("test_ehit_time",&m_test_ehit_time);    
    m_tree->Branch("ehit_E",&m_ehit_energy);
    m_tree->Branch("ehit_kWeird",&m_ehit_kWeird);
    m_tree->Branch("ehit_kDiWeird",&m_ehit_kDiWeird);
@@ -2122,6 +2176,8 @@ void MonoNtupleDumper::clear()
   m_ehit_kWeird.clear();
   m_ehit_kDiWeird.clear();
   m_ehit_flag.clear();
+  m_test_ehit_time.clear();
+  m_mono_ehit_time.clear();
   
   // Jet information
   m_jet_N = 0;

@@ -41,6 +41,7 @@ options.parseArguments()
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:Monopole_SpinHalf_DrellYan-M_2000.root'),
+    #fileNames = cms.untracked.vstring('file:/eos/user/t/tmenezes/Monopole_Ntuples/Zee_sample/Zee_5353F903D8D4.root'),
     fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -130,7 +131,7 @@ process.Monopoler = cms.EDAnalyzer(
     'MonoNtupleDumper',
     isData = cms.bool(False),
     Output = cms.string(options.outputFile),
-    #Output = cms.string("14Mar_MC.root"),
+    #Output = cms.string("Zee_MC.root"),
     TriggerResults = cms.InputTag("TriggerResults","","HLT"),
     TriggerEvent = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
     GeneratorTag = cms.InputTag("genParticles",""),

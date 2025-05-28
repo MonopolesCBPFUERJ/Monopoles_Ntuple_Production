@@ -528,9 +528,27 @@ private:
   std::vector<double> m_ehit_flag;
   std::vector<double> m_ehit_kWeird;
   std::vector<double> m_ehit_kDiWeird;
+  std::vector<double> m_ehit_chi2;
 
+  std::vector<double> m_mono_ehit_eta;
+  std::vector<double> m_mono_ehit_phi;
   std::vector<double> m_mono_ehit_time;
+  std::vector<double> m_mono_ehit_energy;
+  std::vector<double> m_mono_ehit_otEnergy;
+  std::vector<double> m_mono_ehit_flag;
+  std::vector<double> m_mono_ehit_kWeird;
+  std::vector<double> m_mono_ehit_kDiWeird;
+
+
+  std::vector<double> m_test_ehit_eta;
+  std::vector<double> m_test_ehit_phi;
   std::vector<double> m_test_ehit_time;
+  std::vector<double> m_test_ehit_energy;
+  std::vector<double> m_test_ehit_otEnergy;
+  std::vector<double> m_test_ehit_flag;
+  std::vector<double> m_test_ehit_kWeird;
+  std::vector<double> m_test_ehit_kDiWeird;
+
   
   // Jet information
   unsigned m_jet_N;
@@ -686,6 +704,9 @@ private:
   std::vector<int>   m_candPho175TrigCode;
   std::vector<int>   m_candPho200TrigCode;
   //SC or monopole cand function for HLT 
+
+
+
 
 };
 
@@ -1011,14 +1032,33 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
     m_ehit_flag.push_back( (*itHit).recoFlag() );
 
+
+    m_ehit_chi2.push_back( (*itHit).chi2() );
+
+    std::cout << "Chi2: " << (*itHit).chi2() << " RecoFlag: " << (*itHit).recoFlag() << std::endl;
+
     if ((*itHit).energy() > 4.0) {
       m_test_ehit_time.push_back( (*itHit).time() );
+      m_test_ehit_energy.push_back( (*itHit).energy() );
+      m_test_ehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+      m_test_ehit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
+
+      m_test_ehit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
+      m_test_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
+      m_test_ehit_flag.push_back( (*itHit).recoFlag() );
 
     }
 
 
     if ((*itHit).energy() > 200.0) {
       m_mono_ehit_time.push_back( (*itHit).time() );
+      m_mono_ehit_energy.push_back( (*itHit).energy() );
+      m_mono_ehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+      m_mono_ehit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
+
+      m_mono_ehit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
+      m_mono_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
+      m_mono_ehit_flag.push_back( (*itHit).recoFlag() );
 
     }
 
@@ -1832,12 +1872,32 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ehit_eta",&m_ehit_eta);
    m_tree->Branch("ehit_phi",&m_ehit_phi);
    m_tree->Branch("ehit_time",&m_ehit_time);
-   m_tree->Branch("mono_ehit_time",&m_mono_ehit_time); 
-   m_tree->Branch("test_ehit_time",&m_test_ehit_time);    
    m_tree->Branch("ehit_E",&m_ehit_energy);
    m_tree->Branch("ehit_kWeird",&m_ehit_kWeird);
    m_tree->Branch("ehit_kDiWeird",&m_ehit_kDiWeird);
    m_tree->Branch("ehit_flag",&m_ehit_flag);
+   m_tree->Branch("ehit_chi2",&m_ehit_chi2);
+   
+
+   m_tree->Branch("mono_ehit_eta",&m_mono_ehit_eta);
+   m_tree->Branch("mono_ehit_phi",&m_mono_ehit_phi);
+   m_tree->Branch("mono_ehit_time",&m_mono_ehit_time);
+   m_tree->Branch("mono_ehit_energy",&m_mono_ehit_energy);
+   m_tree->Branch("mono_ehit_kWeird",&m_mono_ehit_kWeird);
+   m_tree->Branch("mono_ehit_kDiWeird",&m_mono_ehit_kDiWeird);
+   m_tree->Branch("mono_ehit_flag",&m_mono_ehit_flag);
+
+
+   m_tree->Branch("test_ehit_eta",&m_test_ehit_eta);
+   m_tree->Branch("test_ehit_phi",&m_test_ehit_phi);
+   m_tree->Branch("test_ehit_time",&m_test_ehit_time);
+   m_tree->Branch("test_ehit_energy",&m_test_ehit_energy);
+   m_tree->Branch("test_ehit_kWeird",&m_test_ehit_kWeird);
+   m_tree->Branch("test_ehit_kDiWeird",&m_test_ehit_kDiWeird);
+   m_tree->Branch("test_ehit_flag",&m_test_ehit_flag);
+
+
+
    }
 
   //_Tracker->beginJob(m_tree);
@@ -2176,8 +2236,26 @@ void MonoNtupleDumper::clear()
   m_ehit_kWeird.clear();
   m_ehit_kDiWeird.clear();
   m_ehit_flag.clear();
+  m_ehit_chi2.clear();
+
+  m_test_ehit_eta.clear();
+  m_test_ehit_phi.clear();
   m_test_ehit_time.clear();
+  m_test_ehit_energy.clear();
+  m_test_ehit_otEnergy.clear();
+  m_test_ehit_kWeird.clear();
+  m_test_ehit_kDiWeird.clear();
+  m_test_ehit_flag.clear();
+
+
+  m_mono_ehit_eta.clear();
+  m_mono_ehit_phi.clear();
   m_mono_ehit_time.clear();
+  m_mono_ehit_energy.clear();
+  m_mono_ehit_otEnergy.clear();
+  m_mono_ehit_kWeird.clear();
+  m_mono_ehit_kDiWeird.clear();
+  m_mono_ehit_flag.clear();
   
   // Jet information
   m_jet_N = 0;

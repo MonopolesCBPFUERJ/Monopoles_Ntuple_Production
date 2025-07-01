@@ -24,6 +24,7 @@
 //
 // 2025: Thales included the Type-1 MET corrected via pat;
 // 2025: Added L1 functions
+// 2025: Added extra cluster and RecHits evaluations
 //
 // system include files
 #include <vector>
@@ -426,7 +427,12 @@ private:
   std::vector<double> m_egComb_frac51;
   std::vector<double> m_egComb_frac15;
   std::vector<double> m_egComb_e55;
+  std::vector<double> m_egComb_e55def;
+  std::vector<double> m_egComb_e55OOT;
+  std::vector<double> m_egComb_e55SUM;
   std::vector<double> m_egComb_e99;
+  std::vector<double> m_egComb_e99OOT;
+  std::vector<double> m_egComb_e99SUM;
   std::vector<double> m_egComb_e2x5Right;
   std::vector<double> m_egComb_e2x5Left;
   std::vector<double> m_egComb_e2x5Top;
@@ -548,6 +554,16 @@ private:
   std::vector<double> m_mono_ehit_flag;
   std::vector<double> m_mono_ehit_kWeird;
   std::vector<double> m_mono_ehit_kDiWeird;
+  std::vector<double> m_mono_ehit_kSaturated;
+  std::vector<double> m_mono_ehit_kTPSaturated;
+  std::vector<double> m_mono_ehit_kHasSwitchToGain1;
+  std::vector<double> m_mono_ehit_kPoorReco;
+  std::vector<double> m_mono_ehit_kOutOfTime;
+
+  std::vector<double> m_mono_ehit_kGood;
+  std::vector<double> m_mono_ehit_kKilled;
+  std::vector<double> m_mono_ehit_kL1SpikeFlag;
+
 
 
   std::vector<double> m_test_ehit_eta;
@@ -701,7 +717,13 @@ private:
   std::vector<double> m_candSeedFrac;
   std::vector<double> m_candf15;
   std::vector<double> m_candE55;
+  std::vector<double> m_candE55def;
+  std::vector<double> m_candE55OOT;
+  std::vector<double> m_candE55SUM;
   std::vector<double> m_candE99;
+  std::vector<double> m_candE99def;
+  std::vector<double> m_candE99OOT;
+  std::vector<double> m_candE99SUM;
   std::vector<double> m_candSwissCross;
   std::vector<double> m_candHIso;
   std::vector<double> m_candXYPar0;
@@ -1095,6 +1117,21 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       m_mono_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
       m_mono_ehit_flag.push_back( (*itHit).recoFlag() );
 
+
+      m_mono_ehit_kSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kSaturated) );
+      m_mono_ehit_kTPSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kTPSaturated) );
+
+
+      m_mono_ehit_kHasSwitchToGain1.push_back( (*itHit).checkFlag(EcalRecHit::kHasSwitchToGain1) );
+
+      m_mono_ehit_kPoorReco.push_back( (*itHit).checkFlag(EcalRecHit::kPoorReco) );
+      m_mono_ehit_kOutOfTime.push_back( (*itHit).checkFlag(EcalRecHit::kOutOfTime) );
+
+      m_mono_ehit_kGood.push_back( (*itHit).checkFlag(EcalRecHit::kGood) );
+      m_mono_ehit_kKilled.push_back( (*itHit).checkFlag(EcalRecHit::kKilled) );
+      m_mono_ehit_kL1SpikeFlag.push_back( (*itHit).checkFlag(EcalRecHit::kL1SpikeFlag) );
+
+
     }
 
 
@@ -1240,13 +1277,100 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   // Step 1: Identify the seed crystal (maximum energy hit)
    DetId seedId = ecalTool.getMaximum((*combClusters)[i], ecalRecHits.product()).first;
 
-   //std::cout << "seedId: " << seedId.rawId() << std::endl;
-
    // Step 2: Define a 9x9 rectangle around the seed
    int size = 4;
    CaloRectangleRange<DetId> rectangleRange(size, seedId, *topology);
 
+   
+   // Sum the energy within the 9x9 matrix
+   float e99 = 0.0;
+   float e99_OOT = 0.0;  // new: OOT energy accumulator
+   float e99_SUM = 0.0; 
 
+
+// Step 3: Loop over RecHits in 9x9 and apply custom flag filtering
+for (const auto& detId : rectangleRange) {
+  auto hit = ecalRecHits.product()->find(detId);
+  if (hit != ecalRecHits.product()->end()) {
+    const EcalRecHit& recHit = *hit;
+
+    // Exclude problematic hits
+    if (recHit.checkFlag(EcalRecHit::kDead)) continue;
+    if (recHit.checkFlag(EcalRecHit::kWeird)) continue;
+    if (recHit.checkFlag(EcalRecHit::kKilled)) continue;
+
+
+    float energy = recHit.energy();
+
+     // Count OOT energy separately
+     if (recHit.checkFlag(EcalRecHit::kOutOfTime)) {
+      e99_OOT += energy;
+      std::cout << "OOT RecHit at DetId " << detId.rawId()
+                << " has energy = " << energy << " GeV\n";
+    }
+
+    e99 += energy;
+    e99_SUM = e99 + e99_OOT;
+
+  }
+}
+
+// Sum the energy within the 5x5 matrix
+  float e55 = 0.0;
+  float e55_OOT = 0.0;  // new: OOT energy accumulator
+  float e55_SUM = 0.0; 
+
+  // Step 2: Define a 5x5 rectangle around the seed
+  int size_x = 2;
+  CaloRectangleRange<DetId> rectangleRange_x(size_x, seedId, *topology);
+
+  // Step 3: Loop over RecHits in 9x9 and apply custom flag filtering
+for (const auto& detId : rectangleRange_x) {
+  auto hit = ecalRecHits.product()->find(detId);
+  if (hit != ecalRecHits.product()->end()) {
+    const EcalRecHit& recHit = *hit;
+
+    // Exclude problematic hits
+    if (recHit.checkFlag(EcalRecHit::kDead)) continue;
+    if (recHit.checkFlag(EcalRecHit::kKilled)) continue;
+
+
+    float energy = recHit.energy();
+
+     // Count OOT energy separately
+     if (recHit.checkFlag(EcalRecHit::kOutOfTime)) {
+      e55_OOT += energy;
+      std::cout << "OOT RecHit at DetId " << detId.rawId()
+                << " has energy = " << energy << " GeV\n";
+    }
+
+    if (recHit.checkFlag(EcalRecHit::kWeird)) {
+      std::cout << "Using WEIRD RecHit at DetId " << detId.rawId()
+                << " with energy = " << energy << " GeV\n";
+    }
+    
+
+    e55 += energy;
+
+  }
+}
+   e55_SUM = e55 + e55_OOT;
+
+   // Compute OOT energy fraction
+   float ootFraction = (e99 > 0.0f) ? (e99_OOT / e99) : -1.0f;
+   float ootFraction_e55 = (e55 > 0.0f) ? (e55_OOT / e55) : -1.0f;
+
+   // Optional: print or store it
+   std::cout << "Cluster e99 = " << e99 << " GeV, "
+          << "OOT = " << e99_OOT << " GeV, "
+          << "Fraction = " << ootFraction << std::endl;
+
+    // Optional: print or store it
+   std::cout << "Cluster e55 = " << e55 << " GeV, "
+          << "OOT = " << e55_OOT << " GeV, "
+          << "Fraction = " << ootFraction_e55 << std::endl;
+
+    
 
     ebClusters.push_back( &(*combClusters)[i] );
 
@@ -1256,19 +1380,10 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_egComb_eta.push_back( (*combClusters)[i].eta() );
     m_egComb_phi.push_back( (*combClusters)[i].phi() );
 
-    const float e55 = ecalTool.e5x5((*combClusters)[i],ecalRecHits.product(),topology);
-   // const float e99 = ecalTool.e9x9((*combClusters)[i],ecalRecHits.product(),topology);
-   // float e99 = ecalTool.matrixEnergy((*combClusters)[i], ecalRecHits.product(),topology, 4, 4);
-   // Step 4: Sum the energy within the 9x9 matrix
-    float e99 = 0.0;
-      for (const auto& detId : rectangleRange) {
-        auto hit = ecalRecHits.product()->find(detId);
-          if (hit != ecalRecHits.product()->end()) {
-              e99 += hit->energy();
-      }
-    } 
+ 
     //std::cout << "e99: " << e99 << std::endl;
     //std::cout << "e55: " << e55 << std::endl;
+    const float e55_def = ecalTool.e5x5((*combClusters)[i],ecalRecHits.product(),topology);
     const float e51 = ecalTool.e5x1((*combClusters)[i],ecalRecHits.product(),topology);
     const float e15 = ecalTool.e1x5((*combClusters)[i],ecalRecHits.product(),topology);
     const float eMax = ecalTool.eMax((*combClusters)[i],ecalRecHits.product());
@@ -1286,7 +1401,12 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     m_egComb_frac51.push_back( e51/e55 );
     m_egComb_frac15.push_back( e15/e55 );
     m_egComb_e55.push_back(e55);
+    m_egComb_e55def.push_back(e55_def);
+    m_egComb_e55OOT.push_back(e55_OOT);
+    m_egComb_e55SUM.push_back(e55_SUM);
     m_egComb_e99.push_back(e99);
+    m_egComb_e99OOT.push_back(e99_OOT);
+    m_egComb_e99SUM.push_back(e99_SUM);
     m_egComb_eMax.push_back(eMax/e55);
     m_egComb_e25Right.push_back(ecalTool.e2x5Right((*combClusters)[i],ecalRecHits.product(),topology));
     m_egComb_e25Left.push_back(ecalTool.e2x5Left((*combClusters)[i],ecalRecHits.product(),topology));
@@ -1831,7 +1951,12 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("cand_f51",&m_candSeedFrac);
   m_tree->Branch("cand_f15",&m_candf15);
   m_tree->Branch("cand_e55",&m_candE55);
+  m_tree->Branch("cand_e55def",&m_candE55def);
+  m_tree->Branch("cand_e55OOT",&m_candE55OOT);
+  m_tree->Branch("cand_e55SUM",&m_candE55SUM);
   m_tree->Branch("cand_e99",&m_candE99);
+  m_tree->Branch("cand_e99OOT",&m_candE99OOT);
+  m_tree->Branch("cand_e99SUM",&m_candE99SUM);
   m_tree->Branch("cand_SwissCross",&m_candSwissCross);
   m_tree->Branch("cand_HIso",&m_candHIso);
   m_tree->Branch("cand_XYPar0",&m_candXYPar0);
@@ -1928,7 +2053,12 @@ MonoNtupleDumper::beginJob()
   m_tree->Branch("egComb_frac51",&m_egComb_frac51);
   m_tree->Branch("egComb_frac15",&m_egComb_frac15);
   m_tree->Branch("egComb_e55",&m_egComb_e55);
+  m_tree->Branch("egComb_e55def",&m_egComb_e55def);
+  m_tree->Branch("egComb_e55OOT",&m_egComb_e55OOT);
+  m_tree->Branch("egComb_e55SUM",&m_egComb_e55SUM);
   m_tree->Branch("egComb_e99",&m_egComb_e99);
+  m_tree->Branch("egComb_e99OOT",&m_egComb_e99OOT);
+  m_tree->Branch("egComb_e99SUM",&m_egComb_e99SUM);
   m_tree->Branch("egComb_eRight",&m_egComb_eRight);
   m_tree->Branch("egComb_eLeft",&m_egComb_eLeft);
   m_tree->Branch("egComb_eTop",&m_egComb_eTop);
@@ -2019,6 +2149,14 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("mono_ehit_kDiWeird",&m_mono_ehit_kDiWeird);
    m_tree->Branch("mono_ehit_flag",&m_mono_ehit_flag);
 
+   m_tree->Branch("mono_ehit_kSaturated",&m_mono_ehit_kSaturated);
+   m_tree->Branch("mono_ehit_kTPSaturated",&m_mono_ehit_kTPSaturated);
+   m_tree->Branch("mono_ehit_kHasSwitchToGain1",&m_mono_ehit_kHasSwitchToGain1);
+   m_tree->Branch("mono_ehit_kPoorReco",&m_mono_ehit_kPoorReco);
+   m_tree->Branch("mono_ehit_kOutOfTime",&m_mono_ehit_kOutOfTime);
+   m_tree->Branch("mono_ehit_kGood",&m_mono_ehit_kGood);
+   m_tree->Branch("mono_ehit_kKilled",&m_mono_ehit_kKilled);
+   m_tree->Branch("mono_ehit_kL1SpikeFlag",&m_mono_ehit_kL1SpikeFlag);
 
    m_tree->Branch("test_ehit_eta",&m_test_ehit_eta);
    m_tree->Branch("test_ehit_phi",&m_test_ehit_phi);
@@ -2266,7 +2404,12 @@ void MonoNtupleDumper::clear()
   m_egComb_frac51.clear();
   m_egComb_frac15.clear();
   m_egComb_e55.clear();
+  m_egComb_e55def.clear();
+  m_egComb_e55OOT.clear();
+  m_egComb_e55SUM.clear();
   m_egComb_e99.clear();
+  m_egComb_e99OOT.clear();
+  m_egComb_e99SUM.clear();
   m_egComb_e2x5Right.clear();
   m_egComb_e2x5Left.clear();
   m_egComb_e2x5Top.clear();
@@ -2396,6 +2539,18 @@ void MonoNtupleDumper::clear()
   m_mono_ehit_kWeird.clear();
   m_mono_ehit_kDiWeird.clear();
   m_mono_ehit_flag.clear();
+  m_mono_ehit_kGood.clear();
+  m_mono_ehit_kKilled.clear();
+  m_mono_ehit_kL1SpikeFlag.clear();
+
+  m_mono_ehit_kSaturated.clear();
+  m_mono_ehit_kTPSaturated.clear();
+  m_mono_ehit_kHasSwitchToGain1.clear();
+  m_mono_ehit_kPoorReco.clear();
+  m_mono_ehit_kOutOfTime.clear();
+
+
+  
   
   // Jet information
   m_jet_N = 0;
@@ -2513,7 +2668,13 @@ void MonoNtupleDumper::clear()
   m_candSeedFrac.clear();
   m_candf15.clear();
   m_candE55.clear();
+  m_candE55OOT.clear();
+  m_candE55SUM.clear();
+  m_candE55def.clear();
   m_candE99.clear();
+  m_candE99OOT.clear();
+  m_candE99SUM.clear();
+  m_candE99def.clear();
   m_cande2x5Right.clear();
   m_cande2x5Left.clear();
   m_cande2x5Top.clear();
@@ -2635,7 +2796,13 @@ void MonoNtupleDumper::rematch()
       m_candSeedFrac.push_back( m_egComb_frac51[matchEB] );
       m_candf15.push_back( m_egComb_frac15[matchEB] );
       m_candE55.push_back( m_egComb_e55[matchEB] );
+      m_candE55def.push_back( m_egComb_e55def[matchEB] );
+      m_candE55OOT.push_back( m_egComb_e55OOT[matchEB] );
+      m_candE55SUM.push_back( m_egComb_e55SUM[matchEB] );
       m_candE99.push_back( m_egComb_e99[matchEB] );
+      m_candE99OOT.push_back( m_egComb_e99OOT[matchEB] );
+      m_candE99SUM.push_back( m_egComb_e99SUM[matchEB] );
+      //m_candE99.push_back(  m_egComb_e99SUM[matchEB] );
       m_candSwissCross.push_back( m_egComb_SwissCross[matchEB]);
       m_candHIso.push_back( m_egComb_hcalIso[matchEB] );
       m_candEta.push_back( m_egComb_eta[matchEB] );
@@ -2663,7 +2830,7 @@ void MonoNtupleDumper::rematch()
       m_candSeedFrac.push_back( m_eeComb_frac51[matchEE] );
       m_candf15.push_back( m_eeComb_frac15[matchEE] );
       m_candE55.push_back( m_eeComb_e55[matchEE] );
-      m_candE99.push_back( m_eeComb_e99[matchEE] );
+      //m_candE99.push_back( m_eeComb_e99[matchEE] );
       m_candSwissCross.push_back( m_eeComb_SwissCross[matchEE]);
       m_candHIso.push_back( m_eeComb_hcalIso[matchEE] );
       m_candEta.push_back( m_eeComb_eta[matchEE] );

@@ -75,6 +75,7 @@
 
 // 16-July SimHits
 #include "SimDataFormats/CaloHit/interface/PCaloHitContainer.h"
+#include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 
 //
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -241,7 +242,9 @@ private:
 
   // G4 SimHits
   edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitEBToken;
-  
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitEEToken;
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitHCALToken;
+ 
   // Pileup 
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> m_puInfoToken;
 
@@ -589,7 +592,20 @@ private:
   std::vector<float> ebSimHit_energyHad;
   std::vector<float> ebSimHit_time;
   std::vector<float> ebSimHit_id;
-  
+
+  std::vector<float> eeSimHit_energy;
+  std::vector<float> eeSimHit_energyEM;
+  std::vector<float> eeSimHit_energyHad;
+  std::vector<float> eeSimHit_time;
+  std::vector<float> eeSimHit_id;
+
+  std::vector<float> HCALSimHit_energy;
+  std::vector<float> HCALSimHit_energyEM;
+  std::vector<float> HCALSimHit_energyHad;
+  std::vector<float> HCALSimHit_time;
+  std::vector<float> HCALSimHit_id; 
+
+
   // Jet information
   unsigned m_jet_N;
   std::vector<double> m_jet_E;
@@ -830,6 +846,8 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_Tag_eeUnclean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeUncleanTag") ) )
   ,m_Tag_eeComb( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCombTag") ) )
   ,m_simHitEBToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsEB") ) ) 
+  ,m_simHitEEToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsEE") ) )
+  ,m_simHitHCALToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsHCAL") ) )
   ,m_puInfoToken( consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupInfoTag") ))
   ,m_Tag_PatJets( consumes< std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("PatJetTag")))
   ,m_Tag_PatMETs( consumes< std::vector<pat::MET> >(iConfig.getParameter<edm::InputTag>("PatMETTag")))
@@ -1056,6 +1074,13 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<std::vector<PCaloHit>> simHitsEB;
   iEvent.getByToken(m_simHitEBToken, simHitsEB);
 
+  edm::Handle<std::vector<PCaloHit>> simHitsEE;
+  iEvent.getByToken(m_simHitEEToken, simHitsEE);
+
+  edm::Handle<std::vector<PCaloHit>> simHitsHCAL;
+  iEvent.getByToken(m_simHitHCALToken, simHitsHCAL);
+
+
   // get RecHit collection
   Handle<EBRecHitCollection > ecalRecHits;
   iEvent.getByToken(m_TagEcalEB_RecHits,ecalRecHits);
@@ -1094,6 +1119,32 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 
     }
   } 
+
+
+    if (simHitsEE.isValid()) {
+    for (const auto& hit : *simHitsEE) {
+
+    eeSimHit_energy.push_back(hit.energy());
+    eeSimHit_energyEM.push_back(hit.energyEM());
+    eeSimHit_energyHad.push_back(hit.energyHad());
+    eeSimHit_time.push_back(hit.time());
+    eeSimHit_id.push_back(hit.id());
+
+    }
+  }
+
+    if (simHitsHCAL.isValid()) {
+    for (const auto& hit : *simHitsHCAL) {
+
+    HCALSimHit_energy.push_back(hit.energy());
+    HCALSimHit_energyEM.push_back(hit.energyEM());
+    HCALSimHit_energyHad.push_back(hit.energyHad());
+    HCALSimHit_time.push_back(hit.time());
+    HCALSimHit_id.push_back(hit.id());
+
+    }
+  }
+
 
   if (!simHitsEB.isValid()) {
     edm::LogWarning("MonoNtupleDumper") << "No ECAL Barrel SimHits found";
@@ -1178,12 +1229,6 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 
   }
   //*/
-
-
-
-
-
-
 
 
   // get BasicCluster Collection
@@ -2215,6 +2260,19 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ebSimHit_time", &ebSimHit_time);
    m_tree->Branch("ebSimHit_id", &ebSimHit_id);
 
+   m_tree->Branch("eeSimHit_energy", &eeSimHit_energy);
+   m_tree->Branch("eeSimHit_energyEM", &eeSimHit_energyEM);
+   m_tree->Branch("eeSimHit_energyHad", &eeSimHit_energyHad);
+   m_tree->Branch("eeSimHit_time", &eeSimHit_time);
+   m_tree->Branch("eeSimHit_id", &eeSimHit_id);
+
+   m_tree->Branch("HCALSimHit_energy", &HCALSimHit_energy);
+   m_tree->Branch("HCALSimHit_energyEM", &HCALSimHit_energyEM);
+   m_tree->Branch("HCALSimHit_energyHad", &HCALSimHit_energyHad);
+   m_tree->Branch("HCALSimHit_time", &HCALSimHit_time);
+   m_tree->Branch("HCALSimHit_id", &HCALSimHit_id);
+
+
    }
 
   //_Tracker->beginJob(m_tree);
@@ -2605,6 +2663,20 @@ void MonoNtupleDumper::clear()
   ebSimHit_time.clear();
   ebSimHit_id.clear();
 
+  eeSimHit_energy.clear();
+  eeSimHit_energyEM.clear();
+  eeSimHit_energyHad.clear();
+  eeSimHit_time.clear();
+  eeSimHit_id.clear();
+
+  HCALSimHit_energy.clear();
+  HCALSimHit_energyEM.clear();
+  HCALSimHit_energyHad.clear();
+  HCALSimHit_time.clear();
+  HCALSimHit_id.clear();
+
+
+ 
  
   // Jet information
   m_jet_N = 0;

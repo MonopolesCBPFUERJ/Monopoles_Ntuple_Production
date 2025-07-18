@@ -41,11 +41,13 @@ options.parseArguments()
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:Monopole_SpinHalf_DrellYan-M_2000.root'),
-    #fileNames = cms.untracked.vstring('file:/eos/user/t/tmenezes/Monopole_Ntuples/Zee_sample/Zee_5353F903D8D4.root'),
-    fileNames = cms.untracked.vstring(options.inputFiles),
+    #fileNames = cms.untracked.vstring('file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-BIRKOFF/2018-2500-SpinHalf-NoPU/RECO_2018_2500_8_SpinHalf_NoPU.root'),
+    #fileNames = cms.untracked.vstring('file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-BIRKOFF/2018-2500-SpinHalf-NoPU/RECO_2018_2500_8_SpinHalf_NoPU_BirkOff.root'),
+    #fileNames = cms.untracked.vstring('file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-ZpToEE/2018-2250-ZpToEE-NoPU/RECO_2018_2250_9_ZpToEE_NoPU.root'),
+    fileNames = cms.untracked.vstring('file:/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-RECO-MonopoleSimHits-v2/2018-2500-SpinHalf-NoPU/RECO_2018_2500_4_SpinHalf_NoPU.root'),
+    #fileNames = cms.untracked.vstring(options.inputFiles),
     secondaryFileNames = cms.untracked.vstring()
 )
-
 
 process.options = cms.untracked.PSet(
 
@@ -131,7 +133,7 @@ process.Monopoler = cms.EDAnalyzer(
     'MonoNtupleDumper',
     isData = cms.bool(False),
     Output = cms.string(options.outputFile),
-    #Output = cms.string("Zee_MC.root"),
+    #Output = cms.string("16July_G4SimHits.root"),
     TriggerResults = cms.InputTag("TriggerResults","","HLT"),
     TriggerEvent = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
     GeneratorTag = cms.InputTag("genParticles",""),
@@ -152,7 +154,8 @@ process.Monopoler = cms.EDAnalyzer(
     eeCleanTag = cms.InputTag("multi5x5SuperClusters","multi5x5EndcapBasicClusters"),
     eeUncleanTag = cms.InputTag("multi5x5SuperClusters","uncleanOnlyMulti5x5EndcapBasicClusters") ,
     eeCombTag = cms.InputTag("uncleanEERecovered","uncleanEndcapBasicClusters"),
-    pileupInfoTag = cms.InputTag("addPileupInfo"),    
+    pileupInfoTag = cms.InputTag("addPileupInfo"),
+    simHitsEB = cms.InputTag("g4SimHits", "EcalHitsEB", "SIM"),    
     PatJetTag = cms.InputTag("slimmedJets"),
     PatMETTag = cms.InputTag("slimmedMETs"),
     StripSeedLength = cms.uint32(3),

@@ -24,7 +24,8 @@
 //
 // 2025: Thales included the Type-1 MET corrected via pat;
 // 2025: Added L1 functions
-// 2025: Added extra cluster and RecHits evaluations
+// 2025: Added G4SimHits
+//
 //
 // system include files
 #include <vector>
@@ -73,6 +74,10 @@
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/GenMETCollection.h"
 #include "DataFormats/METReco/interface/GenMET.h"
+
+// 16-July SimHits
+#include "SimDataFormats/CaloHit/interface/PCaloHitContainer.h"
+
 //
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
@@ -228,6 +233,7 @@ private:
   edm::EDGetTokenT< vector<reco::GenMET>> m_Tag_GenMET;
   edm::EDGetTokenT< vector<reco::CaloMET> > m_Tag_CaloMET;
 
+  // Clusters
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_bClusters;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_cClusters;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_combClusters;
@@ -235,6 +241,9 @@ private:
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeUnclean;
   edm::EDGetTokenT< reco::BasicClusterCollection > m_Tag_eeComb;
 
+  // G4 SimHits
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitEBToken;
+  
   // Pileup 
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> m_puInfoToken;
 
@@ -575,6 +584,13 @@ private:
   std::vector<double> m_test_ehit_kWeird;
   std::vector<double> m_test_ehit_kDiWeird;
 
+
+  // G4 SimHits
+  std::vector<float> ebSimHit_energy;
+  std::vector<float> ebSimHit_energyEM;
+  std::vector<float> ebSimHit_energyHad;
+  std::vector<float> ebSimHit_time;
+  std::vector<float> ebSimHit_id;
   
   // Jet information
   unsigned m_jet_N;
@@ -813,6 +829,7 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_Tag_eeClean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCleanTag") ) )
   ,m_Tag_eeUnclean( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeUncleanTag") ) )
   ,m_Tag_eeComb( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCombTag") ) )
+  ,m_simHitEBToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsEB") ) ) 
   ,m_puInfoToken( consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupInfoTag") ))
   ,m_Tag_PatJets( consumes< std::vector<pat::Jet> >(iConfig.getParameter<edm::InputTag>("PatJetTag")))
   ,m_Tag_PatMETs( consumes< std::vector<pat::MET> >(iConfig.getParameter<edm::InputTag>("PatMETTag")))
@@ -1035,6 +1052,10 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   std::cout<<"Pass: Mono::GenMonoClusterTagger"<<std::endl;
 #endif
 
+  // get SimHit collection
+  edm::Handle<std::vector<PCaloHit>> simHitsEB;
+  iEvent.getByToken(m_simHitEBToken, simHitsEB);
+
   // get RecHit collection
   Handle<EBRecHitCollection > ecalRecHits;
   iEvent.getByToken(m_TagEcalEB_RecHits,ecalRecHits);
@@ -1059,6 +1080,25 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   ESHandle<CaloTopology> topo;
   iSetup.get<CaloTopologyRecord>().get(topo);
   const CaloTopology * topology = (const CaloTopology*)topo.product();
+
+  // 16July- Get the SimHits quantities
+  if (simHitsEB.isValid()) { 
+    for (const auto& hit : *simHitsEB) {
+
+    ebSimHit_energy.push_back(hit.energy());
+    ebSimHit_energyEM.push_back(hit.energyEM());
+    ebSimHit_energyHad.push_back(hit.energyHad());
+    ebSimHit_time.push_back(hit.time());
+    ebSimHit_id.push_back(hit.id());
+
+
+    }
+  } 
+
+  if (!simHitsEB.isValid()) {
+    edm::LogWarning("MonoNtupleDumper") << "No ECAL Barrel SimHits found";
+   }
+
 
   // get HE geometry and topology
   // get HB geometry and topology
@@ -1843,6 +1883,7 @@ for (const auto& detId : rectangleRange_x) {
   
 
       if(abs(p.pdgId())== MONO_PID &&  p.status()==1){
+      //if (abs(p.pdgId()) == 32 && (p.status() == 3 || p.status() == 62))  {
         if(p.pdgId()>0){  
           m_mono_p   = p.p();
           m_mono_eta = p.eta();
@@ -2166,7 +2207,11 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("test_ehit_kDiWeird",&m_test_ehit_kDiWeird);
    m_tree->Branch("test_ehit_flag",&m_test_ehit_flag);
 
-
+   m_tree->Branch("ebSimHit_energy", &ebSimHit_energy);
+   m_tree->Branch("ebSimHit_energyEM", &ebSimHit_energyEM);
+   m_tree->Branch("ebSimHit_energyHad", &ebSimHit_energyHad);
+   m_tree->Branch("ebSimHit_time", &ebSimHit_time);
+   m_tree->Branch("ebSimHit_id", &ebSimHit_id);
 
    }
 
@@ -2549,9 +2594,14 @@ void MonoNtupleDumper::clear()
   m_mono_ehit_kPoorReco.clear();
   m_mono_ehit_kOutOfTime.clear();
 
+  // G4 SimHits
+  ebSimHit_energy.clear();
+  ebSimHit_energyEM.clear();
+  ebSimHit_energyHad.clear();
+  ebSimHit_time.clear();
+  ebSimHit_id.clear();
 
-  
-  
+ 
   // Jet information
   m_jet_N = 0;
   m_jet_E.clear();

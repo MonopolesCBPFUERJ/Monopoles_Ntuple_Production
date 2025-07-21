@@ -602,51 +602,65 @@ private:
   std::vector<float> ebSimHit_energyHad;
   std::vector<float> ebSimHit_time;
   std::vector<float> ebSimHit_id;
+  std::vector<float> ebSimHit_Totalenergy; 
 
   std::vector<float> eeSimHit_energy;
   std::vector<float> eeSimHit_energyEM;
   std::vector<float> eeSimHit_energyHad;
   std::vector<float> eeSimHit_time;
   std::vector<float> eeSimHit_id;
+  std::vector<float> eeSimHit_Totalenergy;
+  std::vector<float> ECAL_Totalenergy;
 
   std::vector<float> HCALSimHit_energy;
   std::vector<float> HCALSimHit_energyEM;
   std::vector<float> HCALSimHit_energyHad;
   std::vector<float> HCALSimHit_time;
   std::vector<float> HCALSimHit_id; 
+  std::vector<float> HCALSimHit_Totalenergy;
+  std::vector<float> HCAL_Totalenergy;
 
+  std::vector<float> Tracker_Totalenergy;
   std::vector<float> PixelBarrelSimHit_energyLoss;
   std::vector<float> PixelBarrelSimHit_pabs;
   std::vector<float> PixelBarrelSimHit_tof;
   std::vector<float> PixelBarrelSimHit_pdgId;
+  std::vector<float> PixelBarrelSimHit_TotalenergyLoss;
 
   std::vector<float> PixelEndcapSimHit_energyLoss;
   std::vector<float> PixelEndcapSimHit_pabs;
   std::vector<float> PixelEndcapSimHit_tof;
   std::vector<float> PixelEndcapSimHit_pdgId;
+  std::vector<float> PixelEndcapSimHit_TotalenergyLoss;
 
   std::vector<float> TIBSimHit_energyLoss;
   std::vector<float> TIBSimHit_pabs;
   std::vector<float> TIBSimHit_tof;
   std::vector<float> TIBSimHit_pdgId;
+  std::vector<float> TIBSimHit_TotalenergyLoss;
 
   std::vector<float> TIDSimHit_energyLoss;
   std::vector<float> TIDSimHit_pabs;
   std::vector<float> TIDSimHit_tof;
   std::vector<float> TIDSimHit_pdgId;
-
+  std::vector<float> TIDSimHit_TotalenergyLoss;
 
   std::vector<float> TOBSimHit_energyLoss;
   std::vector<float> TOBSimHit_pabs;
   std::vector<float> TOBSimHit_tof;
   std::vector<float> TOBSimHit_pdgId;
+  std::vector<float> TOBSimHit_TotalenergyLoss;
 
   std::vector<float> TECSimHit_energyLoss;
   std::vector<float> TECSimHit_pabs;
   std::vector<float> TECSimHit_tof;
   std::vector<float> TECSimHit_pdgId;
+  std::vector<float> TECSimHit_TotalenergyLoss;
 
- 
+  std::vector<float> CALO_Totalenergy;
+  std::vector<float> FULL_Totalenergy;
+  
+
   // Jet information
   unsigned m_jet_N;
   std::vector<double> m_jet_E;
@@ -1171,6 +1185,10 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   const CaloTopology * topology = (const CaloTopology*)topo.product();
 
   // 16July- Get the SimHits quantities
+  double totalEnergyLoss_ECAL = 0.0;
+  double totalEnergyLoss_Calo = 0.0;
+  double totalEnergyLoss_Full = 0.0; 
+  double totalEnergyLoss_EB = 0.0;
   if (simHitsEB.isValid()) { 
     for (const auto& hit : *simHitsEB) {
 
@@ -1179,13 +1197,17 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     ebSimHit_energyHad.push_back(hit.energyHad());
     ebSimHit_time.push_back(hit.time());
     ebSimHit_id.push_back(hit.id());
-
-
+    totalEnergyLoss_EB += hit.energy();
+    totalEnergyLoss_ECAL += hit.energy();
+    totalEnergyLoss_Calo += hit.energy();
+    totalEnergyLoss_Full += hit.energy();
     }
   } 
 
-
-    if (simHitsEE.isValid()) {
+   ebSimHit_Totalenergy.push_back(totalEnergyLoss_EB);
+   
+   double totalEnergyLoss_EE = 0.0; 
+   if (simHitsEE.isValid()) {
     for (const auto& hit : *simHitsEE) {
 
     eeSimHit_energy.push_back(hit.energy());
@@ -1193,11 +1215,18 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     eeSimHit_energyHad.push_back(hit.energyHad());
     eeSimHit_time.push_back(hit.time());
     eeSimHit_id.push_back(hit.id());
-
+    totalEnergyLoss_EE += hit.energy();
+    totalEnergyLoss_ECAL += hit.energy();
+    totalEnergyLoss_Calo += hit.energy();
+    totalEnergyLoss_Full += hit.energy();
     }
   }
+   eeSimHit_Totalenergy.push_back(totalEnergyLoss_EE);
+   ECAL_Totalenergy.push_back(totalEnergyLoss_ECAL);
 
-    if (simHitsHCAL.isValid()) {
+ double totalEnergyLoss_HCAL = 0.0;
+ 
+ if (simHitsHCAL.isValid()) {
     for (const auto& hit : *simHitsHCAL) {
 
     HCALSimHit_energy.push_back(hit.energy());
@@ -1205,10 +1234,18 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     HCALSimHit_energyHad.push_back(hit.energyHad());
     HCALSimHit_time.push_back(hit.time());
     HCALSimHit_id.push_back(hit.id());
-
+    totalEnergyLoss_HCAL += hit.energy();
+    totalEnergyLoss_Calo += hit.energy();
+    totalEnergyLoss_Full += hit.energy();
     }
   }
+ 
+  HCALSimHit_Totalenergy.push_back(totalEnergyLoss_HCAL);  
+  HCAL_Totalenergy.push_back(totalEnergyLoss_HCAL);
+  CALO_Totalenergy.push_back(totalEnergyLoss_Calo);
 
+   double totalEnergyLoss_PixelBarrel = 0.0;
+   double totalEnergyLoss_Tracker = 0.0; 
     if (simHitsPixelBarrel.isValid()) {
     for (const auto& hit : *simHitsPixelBarrel) {
 
@@ -1216,10 +1253,15 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       PixelBarrelSimHit_pabs.push_back(hit.pabs());
       PixelBarrelSimHit_tof.push_back(hit.tof());
       PixelBarrelSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_PixelBarrel +=hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();
     }
   }
+  
+   PixelBarrelSimHit_TotalenergyLoss.push_back(totalEnergyLoss_PixelBarrel);
 
+   double totalEnergyLoss_PixelEndcap = 0.0;
     if (simHitsPixelEndcap.isValid()) {
     for (const auto& hit : *simHitsPixelEndcap) {
 
@@ -1227,11 +1269,15 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       PixelEndcapSimHit_pabs.push_back(hit.pabs());
       PixelEndcapSimHit_tof.push_back(hit.tof());
       PixelEndcapSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_PixelEndcap += hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();
     }
   }
+ 
+   PixelEndcapSimHit_TotalenergyLoss.push_back(totalEnergyLoss_PixelEndcap);
 
-
+   double totalEnergyLoss_TIB = 0.0;
    if (simHitsTIB.isValid()) {
     for (const auto& hit : *simHitsTIB) {
 
@@ -1239,11 +1285,14 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       TIBSimHit_pabs.push_back(hit.pabs());
       TIBSimHit_tof.push_back(hit.tof());
       TIBSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_TIB += hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();
     }
   }
+   TIBSimHit_TotalenergyLoss.push_back(totalEnergyLoss_TIB);
 
-
+    double totalEnergyLoss_TID = 0.0;
     if (simHitsTID.isValid()) {
     for (const auto& hit : *simHitsTID) {
 
@@ -1251,12 +1300,14 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       TIDSimHit_pabs.push_back(hit.pabs());
       TIDSimHit_tof.push_back(hit.tof());
       TIDSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_TID += hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();
     }
   }
+   TIDSimHit_TotalenergyLoss.push_back(totalEnergyLoss_TID);
 
-
-
+   double totalEnergyLoss_TOB = 0.0;
     if (simHitsTOB.isValid()) {
     for (const auto& hit : *simHitsTOB) {
 
@@ -1264,11 +1315,14 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       TOBSimHit_pabs.push_back(hit.pabs());
       TOBSimHit_tof.push_back(hit.tof());
       TOBSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_TOB += hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();
     }
   }
+   TOBSimHit_TotalenergyLoss.push_back(totalEnergyLoss_TOB);
 
-
+  double totalEnergyLoss_TEC = 0.0;
     if (simHitsTEC.isValid()) {
     for (const auto& hit : *simHitsTEC) {
 
@@ -1276,11 +1330,14 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
       TECSimHit_pabs.push_back(hit.pabs());
       TECSimHit_tof.push_back(hit.tof());
       TECSimHit_pdgId.push_back(hit.particleType());
-
+      totalEnergyLoss_TEC += hit.energyLoss();
+      totalEnergyLoss_Tracker += hit.energyLoss();
+      totalEnergyLoss_Full += hit.energyLoss();  
     }
   }
-
-
+   TECSimHit_TotalenergyLoss.push_back(totalEnergyLoss_TEC);
+   Tracker_Totalenergy.push_back(totalEnergyLoss_Tracker);
+   FULL_Totalenergy.push_back(totalEnergyLoss_Full);
 
   if (!simHitsEB.isValid()) {
     edm::LogWarning("MonoNtupleDumper") << "No ECAL Barrel SimHits found";
@@ -2394,50 +2451,64 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ebSimHit_energyEM", &ebSimHit_energyEM);
    m_tree->Branch("ebSimHit_energyHad", &ebSimHit_energyHad);
    m_tree->Branch("ebSimHit_time", &ebSimHit_time);
-   m_tree->Branch("ebSimHit_id", &ebSimHit_id);
+   //m_tree->Branch("ebSimHit_id", &ebSimHit_id);
+   m_tree->Branch("ebSimHit_Totalenergy", &ebSimHit_Totalenergy);
 
-   m_tree->Branch("eeSimHit_energy", &eeSimHit_energy);
+   //m_tree->Branch("eeSimHit_energy", &eeSimHit_energy);
    m_tree->Branch("eeSimHit_energyEM", &eeSimHit_energyEM);
    m_tree->Branch("eeSimHit_energyHad", &eeSimHit_energyHad);
    m_tree->Branch("eeSimHit_time", &eeSimHit_time);
-   m_tree->Branch("eeSimHit_id", &eeSimHit_id);
+   //m_tree->Branch("eeSimHit_id", &eeSimHit_id);
+   m_tree->Branch("eeSimHit_Totalenergy", &eeSimHit_Totalenergy);
 
-   m_tree->Branch("HCALSimHit_energy", &HCALSimHit_energy);
+   //m_tree->Branch("HCALSimHit_energy", &HCALSimHit_energy);
    m_tree->Branch("HCALSimHit_energyEM", &HCALSimHit_energyEM);
    m_tree->Branch("HCALSimHit_energyHad", &HCALSimHit_energyHad);
    m_tree->Branch("HCALSimHit_time", &HCALSimHit_time);
-   m_tree->Branch("HCALSimHit_id", &HCALSimHit_id);
+   //m_tree->Branch("HCALSimHit_id", &HCALSimHit_id);
+   m_tree->Branch("HCALSimHit_Totalenergy", &HCALSimHit_Totalenergy);
 
-   m_tree->Branch("PixelBarrelSimHit_energyLoss", &PixelBarrelSimHit_energyLoss); 
-   m_tree->Branch("PixelBarrelSimHit_pabs", &PixelBarrelSimHit_pabs);
-   m_tree->Branch("PixelBarrelSimHit_tof", &PixelBarrelSimHit_tof);
-   m_tree->Branch("PixelBarrelSimHit_particleType", &PixelBarrelSimHit_pdgId);  
+   //m_tree->Branch("PixelBarrelSimHit_energyLoss", &PixelBarrelSimHit_energyLoss); 
+   //m_tree->Branch("PixelBarrelSimHit_pabs", &PixelBarrelSimHit_pabs);
+   //m_tree->Branch("PixelBarrelSimHit_tof", &PixelBarrelSimHit_tof);
+   //m_tree->Branch("PixelBarrelSimHit_particleType", &PixelBarrelSimHit_pdgId);  
+   m_tree->Branch("PixelBarrelSimHit_TotalenergyLoss", &PixelBarrelSimHit_TotalenergyLoss);
+   
+   //m_tree->Branch("PixelEndcapSimHit_energyLoss", &PixelEndcapSimHit_energyLoss);
+   //m_tree->Branch("PixelEndcapSimHit_pabs", &PixelEndcapSimHit_pabs);
+   //m_tree->Branch("PixelEndcapSimHit_tof", &PixelEndcapSimHit_tof);
+   //m_tree->Branch("PixelEndcapSimHit_particleType", &PixelEndcapSimHit_pdgId);
+   m_tree->Branch("PixelEndcapSimHit_TotalenergyLoss", &PixelEndcapSimHit_TotalenergyLoss);
 
-   m_tree->Branch("PixelEndcapSimHit_energyLoss", &PixelEndcapSimHit_energyLoss);
-   m_tree->Branch("PixelEndcapSimHit_pabs", &PixelEndcapSimHit_pabs);
-   m_tree->Branch("PixelEndcapSimHit_tof", &PixelEndcapSimHit_tof);
-   m_tree->Branch("PixelEndcapSimHit_particleType", &PixelEndcapSimHit_pdgId);
+   //m_tree->Branch("TIBSimHit_energyLoss", &TIBSimHit_energyLoss);
+  // m_tree->Branch("TIBSimHit_pabs", &TIBSimHit_pabs);
+  // m_tree->Branch("TIBSimHit_tof", &TIBSimHit_tof);
+  // m_tree->Branch("TIBSimHit_particleType", &TIBSimHit_pdgId);
+   m_tree->Branch("TIBSimHit_TotalenergyLoss", &TIBSimHit_TotalenergyLoss);
 
-   m_tree->Branch("TIBSimHit_energyLoss", &TIBSimHit_energyLoss);
-   m_tree->Branch("TIBSimHit_pabs", &TIBSimHit_pabs);
-   m_tree->Branch("TIBSimHit_tof", &TIBSimHit_tof);
-   m_tree->Branch("TIBSimHit_particleType", &TIBSimHit_pdgId);
+   //m_tree->Branch("TIDSimHit_energyLoss", &TIDSimHit_energyLoss);
+   //m_tree->Branch("TIDSimHit_pabs", &TIDSimHit_pabs);
+  // m_tree->Branch("TIDSimHit_tof", &TIDSimHit_tof);
+  // m_tree->Branch("TIDSimHit_particleType", &TIDSimHit_pdgId);
+   m_tree->Branch("TIDSimHit_TotalenergyLoss", &TIDSimHit_TotalenergyLoss);
 
+   //m_tree->Branch("TOBSimHit_energyLoss", &TOBSimHit_energyLoss);
+   //m_tree->Branch("TOBSimHit_pabs", &TOBSimHit_pabs);
+   //m_tree->Branch("TOBSimHit_tof", &TOBSimHit_tof);
+   //m_tree->Branch("TOBSimHit_particleType", &TOBSimHit_pdgId);
+   m_tree->Branch("TOBSimHit_TotalenergyLoss", &TOBSimHit_TotalenergyLoss);
 
-   m_tree->Branch("TIDSimHit_energyLoss", &TIDSimHit_energyLoss);
-   m_tree->Branch("TIDSimHit_pabs", &TIDSimHit_pabs);
-   m_tree->Branch("TIDSimHit_tof", &TIDSimHit_tof);
-   m_tree->Branch("TIDSimHit_particleType", &TIDSimHit_pdgId);
+   //m_tree->Branch("TECSimHit_energyLoss", &TECSimHit_energyLoss);
+  // m_tree->Branch("TECSimHit_pabs", &TECSimHit_pabs);
+   //m_tree->Branch("TECSimHit_tof", &TECSimHit_tof);
+   //m_tree->Branch("TECSimHit_particleType", &TECSimHit_pdgId);
+   m_tree->Branch("TECSimHit_TotalenergyLoss", &TECSimHit_TotalenergyLoss);
 
-   m_tree->Branch("TOBSimHit_energyLoss", &TOBSimHit_energyLoss);
-   m_tree->Branch("TOBSimHit_pabs", &TOBSimHit_pabs);
-   m_tree->Branch("TOBSimHit_tof", &TOBSimHit_tof);
-   m_tree->Branch("TOBSimHit_particleType", &TOBSimHit_pdgId);
-
-   m_tree->Branch("TECSimHit_energyLoss", &TECSimHit_energyLoss);
-   m_tree->Branch("TECSimHit_pabs", &TECSimHit_pabs);
-   m_tree->Branch("TECSimHit_tof", &TECSimHit_tof);
-   m_tree->Branch("TECSimHit_particleType", &TECSimHit_pdgId);
+   m_tree->Branch("Tracker_Totalenergy", &Tracker_Totalenergy);
+   m_tree->Branch("ECAL_Totalenergy", &ECAL_Totalenergy);
+   m_tree->Branch("HCAL_Totalenergy", &HCAL_Totalenergy);
+   m_tree->Branch("CALO_Totalenergy", &CALO_Totalenergy);
+   m_tree->Branch("FULL_Totalenergy", &FULL_Totalenergy);
 
    }
 
@@ -2828,51 +2899,63 @@ void MonoNtupleDumper::clear()
   ebSimHit_energyHad.clear();
   ebSimHit_time.clear();
   ebSimHit_id.clear();
+  ebSimHit_Totalenergy.clear();
 
   eeSimHit_energy.clear();
   eeSimHit_energyEM.clear();
   eeSimHit_energyHad.clear();
   eeSimHit_time.clear();
   eeSimHit_id.clear();
-
+  eeSimHit_Totalenergy.clear();
+ 
   HCALSimHit_energy.clear();
   HCALSimHit_energyEM.clear();
   HCALSimHit_energyHad.clear();
   HCALSimHit_time.clear();
   HCALSimHit_id.clear();
+  HCALSimHit_Totalenergy.clear();
 
   PixelBarrelSimHit_energyLoss.clear();
   PixelBarrelSimHit_pabs.clear();
   PixelBarrelSimHit_tof.clear();
   PixelBarrelSimHit_pdgId.clear();
+  PixelBarrelSimHit_TotalenergyLoss.clear();
 
   PixelEndcapSimHit_energyLoss.clear();
   PixelEndcapSimHit_pabs.clear();
   PixelEndcapSimHit_tof.clear();
   PixelEndcapSimHit_pdgId.clear();
+  PixelEndcapSimHit_TotalenergyLoss.clear();
 
   TIBSimHit_energyLoss.clear();
   TIBSimHit_pabs.clear();
   TIBSimHit_tof.clear();
   TIBSimHit_pdgId.clear();
+  TIBSimHit_TotalenergyLoss.clear();
 
   TIDSimHit_energyLoss.clear();
   TIDSimHit_pabs.clear();
   TIDSimHit_tof.clear();
   TIDSimHit_pdgId.clear();
-
+  TIDSimHit_TotalenergyLoss.clear();
 
   TOBSimHit_energyLoss.clear();
   TOBSimHit_pabs.clear();
   TOBSimHit_tof.clear();
   TOBSimHit_pdgId.clear();
-
+  TOBSimHit_TotalenergyLoss.clear();
 
   TECSimHit_energyLoss.clear();
   TECSimHit_pabs.clear();
   TECSimHit_tof.clear();
   TECSimHit_pdgId.clear();
+  TECSimHit_TotalenergyLoss.clear();
 
+  Tracker_Totalenergy.clear();
+  ECAL_Totalenergy.clear();
+  HCAL_Totalenergy.clear();
+  CALO_Totalenergy.clear();
+  FULL_Totalenergy.clear();
 
   // Jet information
   m_jet_N = 0;

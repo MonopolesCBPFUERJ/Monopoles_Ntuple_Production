@@ -77,6 +77,7 @@
 #include "SimDataFormats/CaloHit/interface/PCaloHitContainer.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 
+
 //
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
@@ -93,6 +94,8 @@
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "DataFormats/EcalDetId/interface/EcalSubdetector.h"
 #include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+#include "DataFormats/EcalDetId/interface/ESDetId.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalClusterTools.h"
 #include "RecoEcal/EgammaCoreTools/interface/EcalTools.h"
 #include "RecoEgamma/EgammaIsolationAlgos/interface/EgammaHcalIsolation.h"
@@ -100,6 +103,7 @@
 
 // Hcal includes
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
 
 // trigger includes
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
@@ -219,6 +223,7 @@ private:
   edm::EDGetTokenT< reco::VertexCollection > m_PVTag;
   edm::EDGetTokenT< EBRecHitCollection > m_TagEcalEB_RecHits;
   edm::EDGetTokenT< EERecHitCollection > m_TagEcalEE_RecHits;
+  edm::EDGetTokenT< EcalRecHitCollection > m_TagEcalES_RecHits;
   edm::EDGetTokenT< HBHERecHitCollection > m_TagHcalHBHE_RecHits;
   edm::EDGetTokenT< reco::TrackCollection > m_TrackTag;
   edm::EDGetTokenT< std::vector<Trajectory> > m_TrajectoryTag;
@@ -228,7 +233,8 @@ private:
   edm::EDGetTokenT< ElectronCollection > m_Tag_Electrons;
   edm::EDGetTokenT< vector<reco::PFCandidate>> m_Tag_PF;
   edm::EDGetTokenT< std::vector<reco::PFMET> > m_Tag_MET;
-//MET
+
+  //MET
   edm::EDGetTokenT< vector<reco::GenMET>> m_Tag_GenMET;
   edm::EDGetTokenT< vector<reco::CaloMET> > m_Tag_CaloMET;
 
@@ -244,7 +250,9 @@ private:
   // ECAL and HCAL (PCaloHit)
   edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitEBToken;
   edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitEEToken;
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitESToken; 
   edm::EDGetTokenT<std::vector<PCaloHit>> m_simHitHCALToken;
+  
 
   // Tracker (PSimHit)
   edm::EDGetTokenT<std::vector<PSimHit>> m_simHitPixelBarrelToken;
@@ -556,45 +564,92 @@ private:
   std::vector<double> m_eeComb_SwissCross;
   
   // Ecal RecHits
-  std::vector<double> m_ehit_eta;
-  std::vector<double> m_ehit_phi;
-  std::vector<double> m_ehit_time;
-  std::vector<double> m_ehit_energy;
-  std::vector<double> m_ehit_otEnergy;
-  std::vector<double> m_ehit_flag;
-  std::vector<double> m_ehit_kWeird;
-  std::vector<double> m_ehit_kDiWeird;
-  std::vector<double> m_ehit_chi2;
+  std::vector<double> m_ebhit_eta;
+  std::vector<double> m_ebhit_phi;
+  std::vector<double> m_ebhit_time;
+  std::vector<double> m_ebhit_energy;
+  std::vector<double> m_ebhit_otEnergy;
+  std::vector<double> m_ebhit_flag;
+  std::vector<double> m_ebhit_kWeird;
+  std::vector<double> m_ebhit_kDiWeird;
+  std::vector<double> m_ebhit_chi2;
+  std::vector<double> m_ebhit_TotalEnergy;
 
-  std::vector<double> m_mono_ehit_eta;
-  std::vector<double> m_mono_ehit_phi;
-  std::vector<double> m_mono_ehit_time;
-  std::vector<double> m_mono_ehit_energy;
-  std::vector<double> m_mono_ehit_otEnergy;
-  std::vector<double> m_mono_ehit_flag;
-  std::vector<double> m_mono_ehit_kWeird;
-  std::vector<double> m_mono_ehit_kDiWeird;
-  std::vector<double> m_mono_ehit_kSaturated;
-  std::vector<double> m_mono_ehit_kTPSaturated;
-  std::vector<double> m_mono_ehit_kHasSwitchToGain1;
-  std::vector<double> m_mono_ehit_kPoorReco;
-  std::vector<double> m_mono_ehit_kOutOfTime;
+  std::vector<double> m_mono_ebhit_eta;
+  std::vector<double> m_mono_ebhit_phi;
+  std::vector<double> m_mono_ebhit_time;
+  std::vector<double> m_mono_ebhit_energy;
+  std::vector<double> m_mono_ebhit_otEnergy;
+  std::vector<double> m_mono_ebhit_flag;
+  std::vector<double> m_mono_ebhit_kWeird;
+  std::vector<double> m_mono_ebhit_kDiWeird;
+  std::vector<double> m_mono_ebhit_kSaturated;
+  std::vector<double> m_mono_ebhit_kTPSaturated;
+  std::vector<double> m_mono_ebhit_kHasSwitchToGain1;
+  std::vector<double> m_mono_ebhit_kPoorReco;
+  std::vector<double> m_mono_ebhit_kOutOfTime;
+  std::vector<double> m_mono_ebhit_kGood;
+  std::vector<double> m_mono_ebhit_kKilled;
+  std::vector<double> m_mono_ebhit_kL1SpikeFlag;
 
-  std::vector<double> m_mono_ehit_kGood;
-  std::vector<double> m_mono_ehit_kKilled;
-  std::vector<double> m_mono_ehit_kL1SpikeFlag;
+  std::vector<double> m_test_ebhit_eta;
+  std::vector<double> m_test_ebhit_phi;
+  std::vector<double> m_test_ebhit_time;
+  std::vector<double> m_test_ebhit_energy;
+  std::vector<double> m_test_ebhit_otEnergy;
+  std::vector<double> m_test_ebhit_flag;
+  std::vector<double> m_test_ebhit_kWeird;
+  std::vector<double> m_test_ebhit_kDiWeird;
+  std::vector<double> m_test_ebhit_TotalEnergy;
+
+  // RecHits for EE
+  std::vector<double> m_eehit_eta;
+  std::vector<double> m_eehit_time;
+  std::vector<double> m_eehit_energy;
+  std::vector<double> m_eehit_kWeird;
+  std::vector<double> m_eehit_chi2;
+  std::vector<double> m_eehit_TotalEnergy;
+  std::vector<double> m_ECAL_TotalEnergy;
+
+  std::vector<double> m_test_eehit_eta;
+  std::vector<double> m_test_eehit_time;
+  std::vector<double> m_test_eehit_energy;
+  std::vector<double> m_test_eehit_kWeird;
+  std::vector<double> m_test_eehit_chi2;
+  std::vector<double> m_test_eehit_TotalEnergy;
+  std::vector<double> m_test_ECAL_TotalEnergy;
+
+  // RecHits for ES
+  std::vector<double> m_eshit_eta;
+  std::vector<double> m_eshit_time;
+  std::vector<double> m_eshit_energy;
+  std::vector<double> m_eshit_kWeird;
+  std::vector<double> m_eshit_chi2;
+  std::vector<double> m_eshit_TotalEnergy;
+  
+  std::vector<double> m_test_eshit_eta;
+  std::vector<double> m_test_eshit_time;
+  std::vector<double> m_test_eshit_energy;
+  std::vector<double> m_test_eshit_kWeird;
+  std::vector<double> m_test_eshit_chi2;
+  std::vector<double> m_test_eshit_TotalEnergy;
 
 
+  // RecHits for HBHE
+  std::vector<double> m_hbhit_eta;
+  std::vector<double> m_hbhit_time;
+  std::vector<double> m_hbhit_energy;
+  std::vector<double> m_hbhit_kWeird;
+  std::vector<double> m_hbhit_chi2;
+  std::vector<double> m_hbhit_TotalEnergy;
 
-  std::vector<double> m_test_ehit_eta;
-  std::vector<double> m_test_ehit_phi;
-  std::vector<double> m_test_ehit_time;
-  std::vector<double> m_test_ehit_energy;
-  std::vector<double> m_test_ehit_otEnergy;
-  std::vector<double> m_test_ehit_flag;
-  std::vector<double> m_test_ehit_kWeird;
-  std::vector<double> m_test_ehit_kDiWeird;
-
+  std::vector<double> m_test_hbhit_eta;
+  std::vector<double> m_test_hbhit_time;
+  std::vector<double> m_test_hbhit_energy;
+  std::vector<double> m_test_hbhit_kWeird;
+  std::vector<double> m_test_hbhit_chi2;
+  std::vector<double> m_test_hbhit_TotalEnergy;
+  std::vector<double> m_Calo_TotalEnergy;
 
   // G4 SimHits
   std::vector<float> ebSimHit_energy;
@@ -611,6 +666,13 @@ private:
   std::vector<float> eeSimHit_id;
   std::vector<float> eeSimHit_Totalenergy;
   std::vector<float> ECAL_Totalenergy;
+ 
+  std::vector<float> esSimHit_energy;
+  std::vector<float> esSimHit_energyEM;
+  std::vector<float> esSimHit_energyHad;
+  std::vector<float> esSimHit_time;
+  std::vector<float> esSimHit_id;
+  std::vector<float> esSimHit_Totalenergy;
 
   std::vector<float> HCALSimHit_energy;
   std::vector<float> HCALSimHit_energyEM;
@@ -844,14 +906,6 @@ private:
   std::vector<double> m_cande25Left;
 
 
-
-
- 
-
-  
-
-
-
 };
 
 //
@@ -883,6 +937,7 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_PVTag( consumes< reco::VertexCollection >( iConfig.getParameter< edm::InputTag >( "PrimaryVertices" ) ) )
   ,m_TagEcalEB_RecHits( consumes< EBRecHitCollection >( iConfig.getParameter<edm::InputTag>("EcalEBRecHits") ) )
   ,m_TagEcalEE_RecHits( consumes< EERecHitCollection >( iConfig.getParameter<edm::InputTag>("EcalEERecHits") ) )
+  ,m_TagEcalES_RecHits (consumes< EcalRecHitCollection >( iConfig.getParameter<edm::InputTag>("EcalESRecHits") ) )
   ,m_TagHcalHBHE_RecHits( consumes< HBHERecHitCollection >( iConfig.getParameter<edm::InputTag>("HBHERecHits") ) )
   ,m_TrackTag( consumes< reco::TrackCollection >( iConfig.getParameter< edm::InputTag >( "TrackTag" ) ) )
   ,m_TrajectoryTag(consumes<std::vector<Trajectory> >(iConfig.getParameter<edm::InputTag>("TrackTag") ) )
@@ -902,6 +957,7 @@ MonoNtupleDumper::MonoNtupleDumper(const edm::ParameterSet& iConfig)
   ,m_Tag_eeComb( consumes< reco::BasicClusterCollection >(iConfig.getParameter<edm::InputTag>("eeCombTag") ) )
   ,m_simHitEBToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsEB") ) ) 
   ,m_simHitEEToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsEE") ) )
+  ,m_simHitESToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsES") ) )
   ,m_simHitHCALToken( consumes<std::vector<PCaloHit>>(iConfig.getParameter<edm::InputTag>("simHitsHCAL") ) )
   ,m_simHitPixelBarrelToken ( consumes<std::vector<PSimHit>>(iConfig.getParameter<edm::InputTag>("simHitsPixelBarrel") ) )
   ,m_simHitPixelEndcapToken ( consumes<std::vector<PSimHit>>(iConfig.getParameter<edm::InputTag>("simHitsPixelEndcap") ) )
@@ -1138,6 +1194,9 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<std::vector<PCaloHit>> simHitsEE;
   iEvent.getByToken(m_simHitEEToken, simHitsEE);
 
+  edm::Handle<std::vector<PCaloHit>> simHitsES;
+  iEvent.getByToken(m_simHitESToken, simHitsES);
+
   edm::Handle<std::vector<PCaloHit>> simHitsHCAL;
   iEvent.getByToken(m_simHitHCALToken, simHitsHCAL);
 
@@ -1173,6 +1232,12 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   Handle<HBHERecHitCollection> hbRecHits;
   iEvent.getByToken(m_TagHcalHBHE_RecHits,hbRecHits);
   assert( hbRecHits->size() > 0 );
+
+  // get ES RecHit Colleciton
+  Handle<EcalRecHitCollection > esRecHits;
+  iEvent.getByToken(m_TagEcalES_RecHits,esRecHits);
+  //assert( esRecHits->size() > 0 );
+
 
   // get calo geometry and topology
   ESHandle<CaloGeometry> calo;
@@ -1223,6 +1288,24 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   }
    eeSimHit_Totalenergy.push_back(totalEnergyLoss_EE);
    ECAL_Totalenergy.push_back(totalEnergyLoss_ECAL);
+
+  double totalEnergyLoss_ES = 0.0;
+  if (simHitsES.isValid()) {
+    for (const auto& hit : *simHitsES) {
+
+    esSimHit_energy.push_back(hit.energy());
+    esSimHit_energyEM.push_back(hit.energyEM());
+    esSimHit_energyHad.push_back(hit.energyHad());
+    esSimHit_time.push_back(hit.time());
+    esSimHit_id.push_back(hit.id());
+    totalEnergyLoss_ES += hit.energy();
+    //totalEnergyLoss_ECAL += hit.energy();
+    //totalEnergyLoss_Calo += hit.energy();
+    //totalEnergyLoss_Full += hit.energy();
+    }
+  }
+   esSimHit_Totalenergy.push_back(totalEnergyLoss_ES);
+
 
  double totalEnergyLoss_HCAL = 0.0;
  
@@ -1349,8 +1432,12 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   //SimpleCaloRecHitMetaCollection< HBHERecHitCollection > mhbrh(hbRecHits.product());
   EgammaHcalIsolation egIso(0.4,0.1,10.,10.,10.,10.,calo,*hbRecHits);
 
-  /* Comment to test */
-  // fill RecHit Branches
+
+  float totalECALRecHitEnergy = 0.0;
+  float totalebRecHitEnergy = 0.0;
+  float test_totalECALRecHitEnergy = 0.0;
+  float totalCaloRecHitEnergy = 0.0;
+
   EBRecHitCollection::const_iterator itHit = ecalRecHits->begin();
   for ( ; itHit != ecalRecHits->end(); itHit++ ) {
 
@@ -1359,70 +1446,140 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     //m_ehit_eta.push_back( cell->getPosition().eta() );
     //m_ehit_phi.push_back( cell->getPosition().phi() );
 
-    m_ehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
-    m_ehit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
-    m_ehit_energy.push_back( (*itHit).energy() );
-    m_ehit_time.push_back( (*itHit).time() );
+    m_ebhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_ebhit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
+    m_ebhit_energy.push_back( (*itHit).energy() );
+    m_ebhit_time.push_back( (*itHit).time() );
     // the outOfTimeEnergy method has been removed from the EcalRecHit class
     // in CMSSW_7.  I leave this commment here is a note/reminder this is something
     // I don't immediately know how to fix, but this analyzer is not used much
     // so it doesn't need to be fixed at the moment.
     //m_ehit_otEnergy.push_back( (*itHit).outOfTimeEnergy() );
 
-    m_ehit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
-    m_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
-    m_ehit_flag.push_back( (*itHit).recoFlag() );
+    m_ebhit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
+    m_ebhit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
+    m_ebhit_flag.push_back( (*itHit).recoFlag() );
+    m_ebhit_chi2.push_back( (*itHit).chi2() );
 
-
-    m_ehit_chi2.push_back( (*itHit).chi2() );
-
+    totalECALRecHitEnergy += (*itHit).energy(); 
+    totalebRecHitEnergy += (*itHit).energy();
+    totalCaloRecHitEnergy += (*itHit).energy();
     //std::cout << "Chi2: " << (*itHit).chi2() << " RecoFlag: " << (*itHit).recoFlag() << std::endl;
 
     if ((*itHit).energy() > 4.0) {
-      m_test_ehit_time.push_back( (*itHit).time() );
-      m_test_ehit_energy.push_back( (*itHit).energy() );
-      m_test_ehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
-      m_test_ehit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
+      m_test_ebhit_time.push_back( (*itHit).time() );
+      m_test_ebhit_energy.push_back( (*itHit).energy() );
+      m_test_ebhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+      m_test_ebhit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
 
-      m_test_ehit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
-      m_test_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
-      m_test_ehit_flag.push_back( (*itHit).recoFlag() );
-
+      m_test_ebhit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
+      m_test_ebhit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
+      m_test_ebhit_flag.push_back( (*itHit).recoFlag() );
+      test_totalECALRecHitEnergy += (*itHit).energy();
     }
 
 
     if ((*itHit).energy() > 200.0) {
-      m_mono_ehit_time.push_back( (*itHit).time() );
-      m_mono_ehit_energy.push_back( (*itHit).energy() );
-      m_mono_ehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
-      m_mono_ehit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
+      m_mono_ebhit_time.push_back( (*itHit).time() );
+      m_mono_ebhit_energy.push_back( (*itHit).energy() );
+      m_mono_ebhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+      m_mono_ebhit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
 
-      m_mono_ehit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
-      m_mono_ehit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
-      m_mono_ehit_flag.push_back( (*itHit).recoFlag() );
-
-
-      m_mono_ehit_kSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kSaturated) );
-      m_mono_ehit_kTPSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kTPSaturated) );
+      m_mono_ebhit_kWeird.push_back( (*itHit).checkFlag(EcalRecHit::kWeird) );
+      m_mono_ebhit_kDiWeird.push_back( (*itHit).checkFlag(EcalRecHit::kDiWeird) );
+      m_mono_ebhit_flag.push_back( (*itHit).recoFlag() );
 
 
-      m_mono_ehit_kHasSwitchToGain1.push_back( (*itHit).checkFlag(EcalRecHit::kHasSwitchToGain1) );
+      m_mono_ebhit_kSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kSaturated) );
+      m_mono_ebhit_kTPSaturated.push_back( (*itHit).checkFlag(EcalRecHit::kTPSaturated) );
 
-      m_mono_ehit_kPoorReco.push_back( (*itHit).checkFlag(EcalRecHit::kPoorReco) );
-      m_mono_ehit_kOutOfTime.push_back( (*itHit).checkFlag(EcalRecHit::kOutOfTime) );
 
-      m_mono_ehit_kGood.push_back( (*itHit).checkFlag(EcalRecHit::kGood) );
-      m_mono_ehit_kKilled.push_back( (*itHit).checkFlag(EcalRecHit::kKilled) );
-      m_mono_ehit_kL1SpikeFlag.push_back( (*itHit).checkFlag(EcalRecHit::kL1SpikeFlag) );
+      m_mono_ebhit_kHasSwitchToGain1.push_back( (*itHit).checkFlag(EcalRecHit::kHasSwitchToGain1) );
+
+      m_mono_ebhit_kPoorReco.push_back( (*itHit).checkFlag(EcalRecHit::kPoorReco) );
+      m_mono_ebhit_kOutOfTime.push_back( (*itHit).checkFlag(EcalRecHit::kOutOfTime) );
+
+      m_mono_ebhit_kGood.push_back( (*itHit).checkFlag(EcalRecHit::kGood) );
+      m_mono_ebhit_kKilled.push_back( (*itHit).checkFlag(EcalRecHit::kKilled) );
+      m_mono_ebhit_kL1SpikeFlag.push_back( (*itHit).checkFlag(EcalRecHit::kL1SpikeFlag) );
 
 
     }
-
-
-
   }
-  //*/
+  m_ebhit_TotalEnergy.push_back(totalebRecHitEnergy);
+  m_test_ebhit_TotalEnergy.push_back(test_totalECALRecHitEnergy);
 
+  // Loop over EERecHits
+  float eetotalECALRecHitEnergy = 0.0;
+  float ee_test_totalECALRecHitEnergy = 0.0;
+  EERecHitCollection::const_iterator eeitHit = eeRecHits->begin();
+  for ( ; eeitHit != eeRecHits->end(); eeitHit++ ) {
+ 
+    EEDetId detId( (*eeitHit).id() );
+    m_eehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_eehit_energy.push_back( (*eeitHit).energy() );
+    m_eehit_time.push_back( (*eeitHit).time() );
+    m_eehit_kWeird.push_back( (*eeitHit).checkFlag(EcalRecHit::kWeird) );
+    m_eehit_chi2.push_back( (*eeitHit).chi2() );
+    eetotalECALRecHitEnergy += (*eeitHit).energy();
+    totalECALRecHitEnergy += (*eeitHit).energy();    
+    totalCaloRecHitEnergy += (*eeitHit).energy();
+
+    if ((*itHit).energy() > 4.0) {
+    m_test_eehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_test_eehit_energy.push_back( (*eeitHit).energy() );
+    m_test_eehit_time.push_back( (*eeitHit).time() );
+    m_test_eehit_kWeird.push_back( (*eeitHit).checkFlag(EcalRecHit::kWeird) );
+    m_test_eehit_chi2.push_back( (*eeitHit).chi2() );
+    ee_test_totalECALRecHitEnergy += (*eeitHit).energy();
+    }
+   }
+   
+  m_eehit_TotalEnergy.push_back(eetotalECALRecHitEnergy);
+  m_test_eehit_TotalEnergy.push_back(ee_test_totalECALRecHitEnergy);
+  m_ECAL_TotalEnergy.push_back(totalECALRecHitEnergy);
+
+ 
+  // Loop over ESRecHits
+  float estotalECALRecHitEnergy = 0.0;
+  float es_test_totalECALRecHitEnergy = 0.0;
+  ESRecHitCollection::const_iterator esitHit = esRecHits->begin();
+  for ( ; esitHit != esRecHits->end(); esitHit++ ) {
+
+    //ESDetId detId( (*esitHit).id() );
+    //m_eshit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_eshit_energy.push_back( (*esitHit).energy() );
+    m_eshit_time.push_back( (*esitHit).time() );
+    m_eshit_chi2.push_back( (*esitHit).chi2() );
+    estotalECALRecHitEnergy += (*esitHit).energy();
+  }
+  m_eshit_TotalEnergy.push_back(estotalECALRecHitEnergy);
+
+  float hbtotalECALRecHitEnergy = 0.0;
+  float hb_test_totalECALRecHitEnergy = 0.0;
+  HBHERecHitCollection::const_iterator hbitHit = hbRecHits->begin();
+  for ( ; hbitHit != hbRecHits->end(); hbitHit++ ) {
+ 
+    //HcalDetId detId( (*hbitHit).id() );
+    //m_hbhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_hbhit_energy.push_back( (*hbitHit).energy() );
+    m_hbhit_time.push_back( (*hbitHit).time() );
+    m_hbhit_chi2.push_back( (*hbitHit).chi2() );
+    hbtotalECALRecHitEnergy += (*hbitHit).energy();
+    totalCaloRecHitEnergy += (*hbitHit).energy();
+
+    if ((*hbitHit).energy() > 4.0) {
+   
+    m_test_hbhit_energy.push_back( (*hbitHit).energy() );
+    m_test_hbhit_time.push_back( (*hbitHit).time() );
+    m_test_hbhit_chi2.push_back( (*hbitHit).chi2() );
+    hb_test_totalECALRecHitEnergy += (*hbitHit).energy();
+
+    }
+  }
+  m_hbhit_TotalEnergy.push_back(hbtotalECALRecHitEnergy);
+  m_test_hbhit_TotalEnergy.push_back(hb_test_totalECALRecHitEnergy);
+  m_Calo_TotalEnergy.push_back(totalCaloRecHitEnergy);
 
   // get BasicCluster Collection
   Handle<BasicClusterCollection> bClusters;
@@ -2412,40 +2569,81 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("eeComb_SwissCross",&m_eeComb_SwissCross); 
   
    if(_ClustHitOutput){
-   m_tree->Branch("ehit_eta",&m_ehit_eta);
-   m_tree->Branch("ehit_phi",&m_ehit_phi);
-   m_tree->Branch("ehit_time",&m_ehit_time);
-   m_tree->Branch("ehit_E",&m_ehit_energy);
-   m_tree->Branch("ehit_kWeird",&m_ehit_kWeird);
-   m_tree->Branch("ehit_kDiWeird",&m_ehit_kDiWeird);
-   m_tree->Branch("ehit_flag",&m_ehit_flag);
-   m_tree->Branch("ehit_chi2",&m_ehit_chi2);
-   
+   m_tree->Branch("ebhit_eta",&m_ebhit_eta);
+   m_tree->Branch("ebhit_phi",&m_ebhit_phi);
+   m_tree->Branch("ebhit_time",&m_ebhit_time);
+   m_tree->Branch("ebhit_E",&m_ebhit_energy);
+   m_tree->Branch("ebhit_kWeird",&m_ebhit_kWeird);
+   m_tree->Branch("ebhit_kDiWeird",&m_ebhit_kDiWeird);
+   m_tree->Branch("ebhit_flag",&m_ebhit_flag);
+   m_tree->Branch("ebhit_chi2",&m_ebhit_chi2);
+   m_tree->Branch("ebhit_TotalEnergy",&m_ebhit_TotalEnergy);
 
-   m_tree->Branch("mono_ehit_eta",&m_mono_ehit_eta);
-   m_tree->Branch("mono_ehit_phi",&m_mono_ehit_phi);
-   m_tree->Branch("mono_ehit_time",&m_mono_ehit_time);
-   m_tree->Branch("mono_ehit_energy",&m_mono_ehit_energy);
-   m_tree->Branch("mono_ehit_kWeird",&m_mono_ehit_kWeird);
-   m_tree->Branch("mono_ehit_kDiWeird",&m_mono_ehit_kDiWeird);
-   m_tree->Branch("mono_ehit_flag",&m_mono_ehit_flag);
+   m_tree->Branch("eehit_eta",&m_eehit_eta);
+   m_tree->Branch("eehit_time",&m_eehit_time);
+   m_tree->Branch("eehit_E",&m_eehit_energy);
+   m_tree->Branch("eehit_kWeird",&m_eehit_kWeird);
+   m_tree->Branch("eehit_chi2",&m_eehit_chi2);
+   m_tree->Branch("eehit_TotalEnergy",&m_eehit_TotalEnergy);
 
-   m_tree->Branch("mono_ehit_kSaturated",&m_mono_ehit_kSaturated);
-   m_tree->Branch("mono_ehit_kTPSaturated",&m_mono_ehit_kTPSaturated);
-   m_tree->Branch("mono_ehit_kHasSwitchToGain1",&m_mono_ehit_kHasSwitchToGain1);
-   m_tree->Branch("mono_ehit_kPoorReco",&m_mono_ehit_kPoorReco);
-   m_tree->Branch("mono_ehit_kOutOfTime",&m_mono_ehit_kOutOfTime);
-   m_tree->Branch("mono_ehit_kGood",&m_mono_ehit_kGood);
-   m_tree->Branch("mono_ehit_kKilled",&m_mono_ehit_kKilled);
-   m_tree->Branch("mono_ehit_kL1SpikeFlag",&m_mono_ehit_kL1SpikeFlag);
+   m_tree->Branch("eshit_eta",&m_eshit_eta);
+   m_tree->Branch("eshit_time",&m_eshit_time);
+   m_tree->Branch("eshit_E",&m_eshit_energy);
+   m_tree->Branch("eshit_kWeird",&m_eshit_kWeird);
+   m_tree->Branch("eshit_chi2",&m_eshit_chi2);
+   m_tree->Branch("eshit_TotalEnergy",&m_eshit_TotalEnergy);
 
-   m_tree->Branch("test_ehit_eta",&m_test_ehit_eta);
-   m_tree->Branch("test_ehit_phi",&m_test_ehit_phi);
-   m_tree->Branch("test_ehit_time",&m_test_ehit_time);
-   m_tree->Branch("test_ehit_energy",&m_test_ehit_energy);
-   m_tree->Branch("test_ehit_kWeird",&m_test_ehit_kWeird);
-   m_tree->Branch("test_ehit_kDiWeird",&m_test_ehit_kDiWeird);
-   m_tree->Branch("test_ehit_flag",&m_test_ehit_flag);
+   m_tree->Branch("hbhit_eta",&m_hbhit_eta);
+   m_tree->Branch("hbhit_time",&m_hbhit_time);
+   m_tree->Branch("hbhit_E",&m_hbhit_energy);
+   m_tree->Branch("hbhit_chi2",&m_hbhit_chi2);
+
+   m_tree->Branch("mono_ebhit_eta",&m_mono_ebhit_eta);
+   m_tree->Branch("mono_ebhit_phi",&m_mono_ebhit_phi);
+   m_tree->Branch("mono_ebhit_time",&m_mono_ebhit_time);
+   m_tree->Branch("mono_ebhit_energy",&m_mono_ebhit_energy);
+   m_tree->Branch("mono_ebhit_kWeird",&m_mono_ebhit_kWeird);
+   m_tree->Branch("mono_ebhit_kDiWeird",&m_mono_ebhit_kDiWeird);
+   m_tree->Branch("mono_ebhit_flag",&m_mono_ebhit_flag);
+
+   m_tree->Branch("mono_ebhit_kSaturated",&m_mono_ebhit_kSaturated);
+   m_tree->Branch("mono_ebhit_kTPSaturated",&m_mono_ebhit_kTPSaturated);
+   m_tree->Branch("mono_ebhit_kHasSwitchToGain1",&m_mono_ebhit_kHasSwitchToGain1);
+   m_tree->Branch("mono_ebhit_kPoorReco",&m_mono_ebhit_kPoorReco);
+   m_tree->Branch("mono_ebhit_kOutOfTime",&m_mono_ebhit_kOutOfTime);
+   m_tree->Branch("mono_ebhit_kGood",&m_mono_ebhit_kGood);
+   m_tree->Branch("mono_ebhit_kKilled",&m_mono_ebhit_kKilled);
+   m_tree->Branch("mono_ebhit_kL1SpikeFlag",&m_mono_ebhit_kL1SpikeFlag);
+
+   m_tree->Branch("test_ebhit_eta",&m_test_ebhit_eta);
+   m_tree->Branch("test_ebhit_phi",&m_test_ebhit_phi);
+   m_tree->Branch("test_ebhit_time",&m_test_ebhit_time);
+   m_tree->Branch("test_ebhit_energy",&m_test_ebhit_energy);
+   m_tree->Branch("test_ebhit_kWeird",&m_test_ebhit_kWeird);
+   m_tree->Branch("test_ebhit_kDiWeird",&m_test_ebhit_kDiWeird);
+   m_tree->Branch("test_ebhit_flag",&m_test_ebhit_flag);
+   m_tree->Branch("test_ebhit_TotalEnergy",&m_test_ebhit_TotalEnergy);
+
+   m_tree->Branch("test_eehit_eta",&m_test_eehit_eta);
+   m_tree->Branch("test_eehit_time",&m_test_eehit_time);
+   m_tree->Branch("test_eehit_E",&m_test_eehit_energy);
+   m_tree->Branch("test_eehit_kWeird",&m_test_eehit_kWeird);
+   m_tree->Branch("test_eehit_chi2",&m_test_eehit_chi2);
+   m_tree->Branch("test_eehit_TotalEnergy",&m_test_eehit_TotalEnergy);
+
+   m_tree->Branch("test_eshit_eta",&m_test_eshit_eta);
+   m_tree->Branch("test_eshit_time",&m_test_eshit_time);
+   m_tree->Branch("test_eshit_E",&m_test_eshit_energy);
+   m_tree->Branch("test_eshit_kWeird",&m_test_eshit_kWeird);
+   m_tree->Branch("test_eshit_chi2",&m_test_eshit_chi2);
+   m_tree->Branch("test_eshit_TotalEnergy",&m_test_eshit_TotalEnergy);
+
+
+   m_tree->Branch("test_hbhit_time",&m_test_hbhit_time);
+   m_tree->Branch("test_hbhit_E",&m_test_hbhit_energy);
+   m_tree->Branch("test_hbhit_chi2",&m_test_hbhit_chi2);
+   m_tree->Branch("test_hbhit_TotalEnergy",&m_test_hbhit_TotalEnergy);
+
 
    m_tree->Branch("ebSimHit_energy", &ebSimHit_energy);
    m_tree->Branch("ebSimHit_energyEM", &ebSimHit_energyEM);
@@ -2461,6 +2659,13 @@ MonoNtupleDumper::beginJob()
    //m_tree->Branch("eeSimHit_id", &eeSimHit_id);
    m_tree->Branch("eeSimHit_Totalenergy", &eeSimHit_Totalenergy);
 
+   m_tree->Branch("esSimHit_energy", &esSimHit_energy);
+   m_tree->Branch("esSimHit_energyEM", &esSimHit_energyEM);
+   m_tree->Branch("esSimHit_energyHad", &esSimHit_energyHad);
+   m_tree->Branch("esSimHit_time", &esSimHit_time);
+   //m_tree->Branch("esSimHit_id", &esSimHit_id);
+   m_tree->Branch("esSimHit_Totalenergy", &esSimHit_Totalenergy);
+
    //m_tree->Branch("HCALSimHit_energy", &HCALSimHit_energy);
    m_tree->Branch("HCALSimHit_energyEM", &HCALSimHit_energyEM);
    m_tree->Branch("HCALSimHit_energyHad", &HCALSimHit_energyHad);
@@ -2470,45 +2675,40 @@ MonoNtupleDumper::beginJob()
 
    //m_tree->Branch("PixelBarrelSimHit_energyLoss", &PixelBarrelSimHit_energyLoss); 
    //m_tree->Branch("PixelBarrelSimHit_pabs", &PixelBarrelSimHit_pabs);
-   //m_tree->Branch("PixelBarrelSimHit_tof", &PixelBarrelSimHit_tof);
+   m_tree->Branch("PixelBarrelSimHit_tof", &PixelBarrelSimHit_tof);
    //m_tree->Branch("PixelBarrelSimHit_particleType", &PixelBarrelSimHit_pdgId);  
    m_tree->Branch("PixelBarrelSimHit_TotalenergyLoss", &PixelBarrelSimHit_TotalenergyLoss);
    
    //m_tree->Branch("PixelEndcapSimHit_energyLoss", &PixelEndcapSimHit_energyLoss);
    //m_tree->Branch("PixelEndcapSimHit_pabs", &PixelEndcapSimHit_pabs);
-   //m_tree->Branch("PixelEndcapSimHit_tof", &PixelEndcapSimHit_tof);
+   m_tree->Branch("PixelEndcapSimHit_tof", &PixelEndcapSimHit_tof);
    //m_tree->Branch("PixelEndcapSimHit_particleType", &PixelEndcapSimHit_pdgId);
    m_tree->Branch("PixelEndcapSimHit_TotalenergyLoss", &PixelEndcapSimHit_TotalenergyLoss);
 
    //m_tree->Branch("TIBSimHit_energyLoss", &TIBSimHit_energyLoss);
   // m_tree->Branch("TIBSimHit_pabs", &TIBSimHit_pabs);
-  // m_tree->Branch("TIBSimHit_tof", &TIBSimHit_tof);
+   m_tree->Branch("TIBSimHit_tof", &TIBSimHit_tof);
   // m_tree->Branch("TIBSimHit_particleType", &TIBSimHit_pdgId);
    m_tree->Branch("TIBSimHit_TotalenergyLoss", &TIBSimHit_TotalenergyLoss);
 
    //m_tree->Branch("TIDSimHit_energyLoss", &TIDSimHit_energyLoss);
    //m_tree->Branch("TIDSimHit_pabs", &TIDSimHit_pabs);
-  // m_tree->Branch("TIDSimHit_tof", &TIDSimHit_tof);
+   m_tree->Branch("TIDSimHit_tof", &TIDSimHit_tof);
   // m_tree->Branch("TIDSimHit_particleType", &TIDSimHit_pdgId);
    m_tree->Branch("TIDSimHit_TotalenergyLoss", &TIDSimHit_TotalenergyLoss);
 
    //m_tree->Branch("TOBSimHit_energyLoss", &TOBSimHit_energyLoss);
    //m_tree->Branch("TOBSimHit_pabs", &TOBSimHit_pabs);
-   //m_tree->Branch("TOBSimHit_tof", &TOBSimHit_tof);
+   m_tree->Branch("TOBSimHit_tof", &TOBSimHit_tof);
    //m_tree->Branch("TOBSimHit_particleType", &TOBSimHit_pdgId);
    m_tree->Branch("TOBSimHit_TotalenergyLoss", &TOBSimHit_TotalenergyLoss);
 
    //m_tree->Branch("TECSimHit_energyLoss", &TECSimHit_energyLoss);
   // m_tree->Branch("TECSimHit_pabs", &TECSimHit_pabs);
-   //m_tree->Branch("TECSimHit_tof", &TECSimHit_tof);
+   m_tree->Branch("TECSimHit_tof", &TECSimHit_tof);
    //m_tree->Branch("TECSimHit_particleType", &TECSimHit_pdgId);
    m_tree->Branch("TECSimHit_TotalenergyLoss", &TECSimHit_TotalenergyLoss);
 
-   m_tree->Branch("Tracker_Totalenergy", &Tracker_Totalenergy);
-   m_tree->Branch("ECAL_Totalenergy", &ECAL_Totalenergy);
-   m_tree->Branch("HCAL_Totalenergy", &HCAL_Totalenergy);
-   m_tree->Branch("CALO_Totalenergy", &CALO_Totalenergy);
-   m_tree->Branch("FULL_Totalenergy", &FULL_Totalenergy);
 
    }
 
@@ -2606,8 +2806,15 @@ MonoNtupleDumper::beginJob()
     m_tree->Branch("mono_KE",&m_mono_KE,"mono_KE/D");
     m_tree->Branch("mono_status",&m_mono_status,"mono_status/D");
     m_tree->Branch("mono_pdgId",&m_mono_pdgId,"mono_pdgId/D");
-    
-    
+    m_tree->Branch("mono_Tracker", &Tracker_Totalenergy);
+    m_tree->Branch("mono_ECALSimHit", &ECAL_Totalenergy);
+    m_tree->Branch("mono_HCALSimHit", &HCAL_Totalenergy);
+    m_tree->Branch("mono_CaloSimHit", &CALO_Totalenergy);
+    m_tree->Branch("mono_FullSimHit", &FULL_Totalenergy);
+    m_tree->Branch("mono_ECALRecHit" ,&m_ECAL_TotalEnergy);
+    m_tree->Branch("mono_HCALRecHit",&m_hbhit_TotalEnergy);    
+    m_tree->Branch("mono_CaloRecHit" ,&m_Calo_TotalEnergy);
+   
     m_tree->Branch("amon_eta", &m_amon_eta, "amon_eta/D");
     m_tree->Branch("amon_phi", &m_amon_phi, "amon_phi/D");
     m_tree->Branch("amon_m", &m_amon_m, "amon_m/D");
@@ -2855,43 +3062,89 @@ void MonoNtupleDumper::clear()
   m_eeComb_SwissCross.clear();
   
   // Ecal RecHits
-  m_ehit_eta.clear();
-  m_ehit_phi.clear();
-  m_ehit_time.clear();
-  m_ehit_energy.clear();
-  m_ehit_otEnergy.clear();
-  m_ehit_kWeird.clear();
-  m_ehit_kDiWeird.clear();
-  m_ehit_flag.clear();
-  m_ehit_chi2.clear();
+  m_ebhit_eta.clear();
+  m_ebhit_phi.clear();
+  m_ebhit_time.clear();
+  m_ebhit_energy.clear();
+  m_ebhit_otEnergy.clear();
+  m_ebhit_kWeird.clear();
+  m_ebhit_kDiWeird.clear();
+  m_ebhit_flag.clear();
+  m_ebhit_chi2.clear();
+  m_ebhit_TotalEnergy.clear();
 
-  m_test_ehit_eta.clear();
-  m_test_ehit_phi.clear();
-  m_test_ehit_time.clear();
-  m_test_ehit_energy.clear();
-  m_test_ehit_otEnergy.clear();
-  m_test_ehit_kWeird.clear();
-  m_test_ehit_kDiWeird.clear();
-  m_test_ehit_flag.clear();
+  m_eehit_eta.clear();
+  m_eehit_time.clear();
+  m_eehit_energy.clear();
+  m_eehit_kWeird.clear();
+  m_eehit_chi2.clear();
+  m_eehit_TotalEnergy.clear();
+  m_ECAL_TotalEnergy.clear();
+
+  m_eshit_eta.clear();
+  m_eshit_time.clear();
+  m_eshit_energy.clear();
+  m_eshit_kWeird.clear();
+  m_eshit_chi2.clear();
+  m_eshit_TotalEnergy.clear();
+
+  m_test_ebhit_phi.clear();
+  m_test_ebhit_time.clear();
+  m_test_ebhit_energy.clear();
+  m_test_ebhit_otEnergy.clear();
+  m_test_ebhit_kWeird.clear();
+  m_test_ebhit_kDiWeird.clear();
+  m_test_ebhit_flag.clear();
+  m_test_ebhit_TotalEnergy.clear();\
+
+  m_test_eehit_eta.clear();
+  m_test_eehit_time.clear();
+  m_test_eehit_energy.clear();
+  m_test_eehit_kWeird.clear();
+  m_test_eehit_chi2.clear();
+  m_test_eehit_TotalEnergy.clear();
+
+  m_test_eshit_eta.clear();
+  m_test_eshit_time.clear();
+  m_test_eshit_energy.clear();
+  m_test_eshit_kWeird.clear();
+  m_test_eshit_chi2.clear();
+  m_test_eshit_TotalEnergy.clear();
 
 
-  m_mono_ehit_eta.clear();
-  m_mono_ehit_phi.clear();
-  m_mono_ehit_time.clear();
-  m_mono_ehit_energy.clear();
-  m_mono_ehit_otEnergy.clear();
-  m_mono_ehit_kWeird.clear();
-  m_mono_ehit_kDiWeird.clear();
-  m_mono_ehit_flag.clear();
-  m_mono_ehit_kGood.clear();
-  m_mono_ehit_kKilled.clear();
-  m_mono_ehit_kL1SpikeFlag.clear();
+  m_hbhit_eta.clear();
+  m_hbhit_time.clear();
+  m_hbhit_energy.clear();
+  m_hbhit_kWeird.clear();
+  m_hbhit_chi2.clear();
+  m_hbhit_TotalEnergy.clear();
 
-  m_mono_ehit_kSaturated.clear();
-  m_mono_ehit_kTPSaturated.clear();
-  m_mono_ehit_kHasSwitchToGain1.clear();
-  m_mono_ehit_kPoorReco.clear();
-  m_mono_ehit_kOutOfTime.clear();
+  m_Calo_TotalEnergy.clear();
+
+  m_test_hbhit_eta.clear();
+  m_test_hbhit_time.clear();
+  m_test_hbhit_energy.clear();
+  m_test_hbhit_kWeird.clear();
+  m_test_hbhit_chi2.clear();
+  m_test_hbhit_TotalEnergy.clear();
+
+  m_mono_ebhit_eta.clear();
+  m_mono_ebhit_phi.clear();
+  m_mono_ebhit_time.clear();
+  m_mono_ebhit_energy.clear();
+  m_mono_ebhit_otEnergy.clear();
+  m_mono_ebhit_kWeird.clear();
+  m_mono_ebhit_kDiWeird.clear();
+  m_mono_ebhit_flag.clear();
+  m_mono_ebhit_kGood.clear();
+  m_mono_ebhit_kKilled.clear();
+  m_mono_ebhit_kL1SpikeFlag.clear();
+
+  m_mono_ebhit_kSaturated.clear();
+  m_mono_ebhit_kTPSaturated.clear();
+  m_mono_ebhit_kHasSwitchToGain1.clear();
+  m_mono_ebhit_kPoorReco.clear();
+  m_mono_ebhit_kOutOfTime.clear();
 
   // G4 SimHits
   ebSimHit_energy.clear();
@@ -2908,6 +3161,13 @@ void MonoNtupleDumper::clear()
   eeSimHit_id.clear();
   eeSimHit_Totalenergy.clear();
  
+  esSimHit_energy.clear();
+  esSimHit_energyEM.clear();
+  esSimHit_energyHad.clear();
+  esSimHit_time.clear();
+  esSimHit_id.clear();
+  esSimHit_Totalenergy.clear();
+
   HCALSimHit_energy.clear();
   HCALSimHit_energyEM.clear();
   HCALSimHit_energyHad.clear();

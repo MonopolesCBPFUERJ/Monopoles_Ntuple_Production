@@ -656,7 +656,8 @@ private:
   double m_mono_pt;
   double m_mono_Et; 
   double m_mono_Et2; 
-  double m_mono_E; 
+  double m_mono_E;
+  double m_mono_KE; 
   double m_mono_mt; 
   double m_mono_mt2; 
   int    m_mono_status;
@@ -678,7 +679,8 @@ private:
   double m_amon_pt;
   double m_amon_Et; 
   double m_amon_Et2; 
-  double m_amon_E; 
+  double m_amon_E;
+  double m_amon_KE; 
   double m_amon_mt; 
   double m_amon_mt2; 
   int    m_amon_status;
@@ -1734,7 +1736,8 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
           m_mono_pt  = p.pt();
           m_mono_Et  = p.et();  
           m_mono_Et2 = p.et2();//transverse energy squared, use this for cut  
-          m_mono_E   = p.energy();  
+          m_mono_E   = p.energy();
+	  m_mono_KE  = p.energy() - p.mass();  
           m_mono_mt  = p.mt();//transverse mass
           m_mono_mt2 = p.mtSqr();//transverse mass squared
           m_mono_status   = p.status(); 
@@ -1756,6 +1759,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
           m_amon_Et  = p.et();  
           m_amon_Et2 = p.et2();//transverse energy squared, use this for cut  
           m_amon_E   = p.energy();  
+	  m_amon_KE  = p.energy() - p.mass();
           m_amon_mt  = p.mt();//transverse mass
           m_amon_mt2 = p.mtSqr();//transverse mass squared
           m_amon_status   = p.status(); 
@@ -2123,6 +2127,7 @@ MonoNtupleDumper::beginJob()
     m_tree->Branch("mono_Et",&m_mono_Et,"mono_Et/D");
     m_tree->Branch("mono_Et2",&m_mono_Et2,"mono_Et2/D");
     m_tree->Branch("mono_E",&m_mono_E,"mono_E/D");
+    m_tree->Branch("mono_KE",&m_mono_KE,"mono_KE/D");
     m_tree->Branch("mono_status",&m_mono_status,"mono_status/D");
     m_tree->Branch("mono_pdgId",&m_mono_pdgId,"mono_pdgId/D");
     
@@ -2140,6 +2145,7 @@ MonoNtupleDumper::beginJob()
     m_tree->Branch("amon_Et",&m_amon_Et,"amon_Et/D");
     m_tree->Branch("amon_Et2",&m_amon_Et2,"amon_Et2/D");
     m_tree->Branch("amon_E",&m_amon_E,"amon_E/D");
+    m_tree->Branch("amon_KE",&m_amon_KE,"amon_KE/D");
     m_tree->Branch("amon_status",&m_amon_status,"amon_status/D");
     m_tree->Branch("amon_pdgId",&m_amon_pdgId,"amon_pdgId/D");
 
@@ -2478,6 +2484,7 @@ void MonoNtupleDumper::clear()
   m_mono_Et = 0.; 
   m_mono_Et2 = 0.; 
   m_mono_E = 0.; 
+  m_mono_KE = 0.;
   m_mono_mt = 0.; 
   m_mono_mt2 = 0.; 
   m_mono_status = 0;
@@ -2496,6 +2503,7 @@ void MonoNtupleDumper::clear()
   m_amon_Et = 0.; 
   m_amon_Et2 = 0.; 
   m_amon_E = 0.; 
+  m_amon_KE = 0.;
   m_amon_mt = 0.; 
   m_amon_mt2 = 0.; 
   m_amon_status = 0;

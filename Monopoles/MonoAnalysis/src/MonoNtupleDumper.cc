@@ -566,6 +566,7 @@ private:
   // Ecal RecHits
   std::vector<double> m_ebhit_eta;
   std::vector<double> m_ebhit_phi;
+  std::vector<double> m_ebhit_id;
   std::vector<double> m_ebhit_time;
   std::vector<double> m_ebhit_energy;
   std::vector<double> m_ebhit_otEnergy;
@@ -604,6 +605,8 @@ private:
 
   // RecHits for EE
   std::vector<double> m_eehit_eta;
+  std::vector<double> m_eehit_phi;
+  std::vector<double> m_eehit_id;
   std::vector<double> m_eehit_time;
   std::vector<double> m_eehit_energy;
   std::vector<double> m_eehit_kWeird;
@@ -657,15 +660,24 @@ private:
   std::vector<float> ebSimHit_energyHad;
   std::vector<float> ebSimHit_time;
   std::vector<float> ebSimHit_id;
+  std::vector<float> ebSimHit_geantTrackId;
+  std::vector<float> ebSimHit_eta;
+  std::vector<float> ebSimHit_phi;
   std::vector<float> ebSimHit_Totalenergy; 
+  std::unordered_map<int, std::pair<float,float>> ebCellEtaPhiCache;
+
 
   std::vector<float> eeSimHit_energy;
   std::vector<float> eeSimHit_energyEM;
   std::vector<float> eeSimHit_energyHad;
   std::vector<float> eeSimHit_time;
   std::vector<float> eeSimHit_id;
+  std::vector<float> eeSimHit_geantTrackId;
+  std::vector<float> eeSimHit_eta;
+  std::vector<float> eeSimHit_phi;
   std::vector<float> eeSimHit_Totalenergy;
   std::vector<float> ECAL_Totalenergy;
+  std::unordered_map<int, std::pair<float,float>> eeCellEtaPhiCache;
  
   std::vector<float> esSimHit_energy;
   std::vector<float> esSimHit_energyEM;
@@ -1244,6 +1256,8 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   iSetup.get<CaloGeometryRecord>().get(calo);
   const CaloGeometry *m_caloGeo = (const CaloGeometry*)calo.product();
   const CaloSubdetectorGeometry *geom = m_caloGeo->getSubdetectorGeometry(DetId::Ecal,EcalBarrel);
+  const CaloSubdetectorGeometry *geomEE = m_caloGeo->getSubdetectorGeometry(DetId::Ecal, EcalEndcap);
+
 
   ESHandle<CaloTopology> topo;
   iSetup.get<CaloTopologyRecord>().get(topo);
@@ -1262,6 +1276,18 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     ebSimHit_energyHad.push_back(hit.energyHad());
     ebSimHit_time.push_back(hit.time());
     ebSimHit_id.push_back(hit.id());
+    ebSimHit_geantTrackId.push_back(hit.geantTrackId());
+
+    const uint32_t raw = hit.id();               // PCaloHit stores raw DetId
+    auto it = ebCellEtaPhiCache.find(raw);
+    if (it == ebCellEtaPhiCache.end()) {
+      EBDetId id(raw);
+      const GlobalPoint& gp = geom->getGeometry(id)->getPosition();
+      it = ebCellEtaPhiCache.emplace(raw, std::make_pair(float(gp.eta()), float(gp.phi()))).first;
+    }
+    ebSimHit_eta.push_back(it->second.first);
+    ebSimHit_phi.push_back(it->second.second);
+
     totalEnergyLoss_EB += hit.energy();
     totalEnergyLoss_ECAL += hit.energy();
     totalEnergyLoss_Calo += hit.energy();
@@ -1280,6 +1306,19 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     eeSimHit_energyHad.push_back(hit.energyHad());
     eeSimHit_time.push_back(hit.time());
     eeSimHit_id.push_back(hit.id());
+    eeSimHit_geantTrackId.push_back(hit.geantTrackId());  
+
+    const uint32_t raw = hit.id();               // PCaloHit stores raw DetId
+    auto it = eeCellEtaPhiCache.find(raw);
+    if (it == eeCellEtaPhiCache.end()) {
+      EEDetId id(raw);
+      const GlobalPoint& gp = geomEE->getGeometry(id)->getPosition();
+      it = eeCellEtaPhiCache.emplace(raw, std::make_pair(float(gp.eta()), float(gp.phi()))).first;
+    }
+    eeSimHit_eta.push_back(it->second.first);
+    eeSimHit_phi.push_back(it->second.second);
+
+
     totalEnergyLoss_EE += hit.energy();
     totalEnergyLoss_ECAL += hit.energy();
     totalEnergyLoss_Calo += hit.energy();
@@ -1446,6 +1485,10 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     //m_ehit_eta.push_back( cell->getPosition().eta() );
     //m_ehit_phi.push_back( cell->getPosition().phi() );
 
+    uint32_t rawId = (*itHit).id().rawId();
+    m_ebhit_id.push_back(rawId);
+
+
     m_ebhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
     m_ebhit_phi.push_back( geom->getGeometry(detId)->getPosition().phi() );
     m_ebhit_energy.push_back( (*itHit).energy() );
@@ -1516,7 +1559,11 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
   for ( ; eeitHit != eeRecHits->end(); eeitHit++ ) {
  
     EEDetId detId( (*eeitHit).id() );
-    m_eehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+
+    uint32_t rawId = (*eeitHit).id().rawId();
+    m_eehit_id.push_back(rawId);
+    m_eehit_eta.push_back( geomEE->getGeometry(detId)->getPosition().eta() );
+    m_eehit_phi.push_back( geomEE->getGeometry(detId)->getPosition().phi() );    
     m_eehit_energy.push_back( (*eeitHit).energy() );
     m_eehit_time.push_back( (*eeitHit).time() );
     m_eehit_kWeird.push_back( (*eeitHit).checkFlag(EcalRecHit::kWeird) );
@@ -1526,7 +1573,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     totalCaloRecHitEnergy += (*eeitHit).energy();
 
     if ((*itHit).energy() > 4.0) {
-    m_test_eehit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
+    m_test_eehit_eta.push_back( geomEE->getGeometry(detId)->getPosition().eta() );
     m_test_eehit_energy.push_back( (*eeitHit).energy() );
     m_test_eehit_time.push_back( (*eeitHit).time() );
     m_test_eehit_kWeird.push_back( (*eeitHit).checkFlag(EcalRecHit::kWeird) );
@@ -2277,8 +2324,8 @@ for (const auto& detId : rectangleRange_x) {
       const reco::GenParticle & p = (*genParticles)[i];
   
 
-      if(abs(p.pdgId())== MONO_PID &&  p.status()==1){
-      //if (abs(p.pdgId()) == 32 && (p.status() == 3 || p.status() == 62))  {
+        if(abs(p.pdgId())== MONO_PID &&  p.status()==1){
+        //if (abs(p.pdgId()) == 32 && (p.status() == 3 || p.status() == 62))  {
         if(p.pdgId()>0){  
           m_mono_p   = p.p();
           m_mono_eta = p.eta();
@@ -2571,6 +2618,7 @@ MonoNtupleDumper::beginJob()
    if(_ClustHitOutput){
    m_tree->Branch("ebhit_eta",&m_ebhit_eta);
    m_tree->Branch("ebhit_phi",&m_ebhit_phi);
+   m_tree->Branch("ebhit_id",&m_ebhit_id);
    m_tree->Branch("ebhit_time",&m_ebhit_time);
    m_tree->Branch("ebhit_E",&m_ebhit_energy);
    m_tree->Branch("ebhit_kWeird",&m_ebhit_kWeird);
@@ -2580,6 +2628,8 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ebhit_TotalEnergy",&m_ebhit_TotalEnergy);
 
    m_tree->Branch("eehit_eta",&m_eehit_eta);
+   m_tree->Branch("eehit_phi",&m_eehit_phi);
+   m_tree->Branch("eehit_id",&m_eehit_id);
    m_tree->Branch("eehit_time",&m_eehit_time);
    m_tree->Branch("eehit_E",&m_eehit_energy);
    m_tree->Branch("eehit_kWeird",&m_eehit_kWeird);
@@ -2649,14 +2699,20 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ebSimHit_energyEM", &ebSimHit_energyEM);
    m_tree->Branch("ebSimHit_energyHad", &ebSimHit_energyHad);
    m_tree->Branch("ebSimHit_time", &ebSimHit_time);
-   //m_tree->Branch("ebSimHit_id", &ebSimHit_id);
+   m_tree->Branch("ebSimHit_eta", &ebSimHit_eta);
+   m_tree->Branch("ebSimHit_phi", &ebSimHit_phi);
+   m_tree->Branch("ebSimHit_id", &ebSimHit_id);
+   m_tree->Branch("ebSimHit_geantTrackId", &ebSimHit_geantTrackId);
    m_tree->Branch("ebSimHit_Totalenergy", &ebSimHit_Totalenergy);
 
    //m_tree->Branch("eeSimHit_energy", &eeSimHit_energy);
    m_tree->Branch("eeSimHit_energyEM", &eeSimHit_energyEM);
    m_tree->Branch("eeSimHit_energyHad", &eeSimHit_energyHad);
    m_tree->Branch("eeSimHit_time", &eeSimHit_time);
-   //m_tree->Branch("eeSimHit_id", &eeSimHit_id);
+   m_tree->Branch("eeSimHit_id", &eeSimHit_id);
+   m_tree->Branch("eeSimHit_geantTrackId", &eeSimHit_geantTrackId);
+   m_tree->Branch("eeSimHit_eta", &eeSimHit_eta);
+   m_tree->Branch("eeSimHit_phi", &eeSimHit_phi);
    m_tree->Branch("eeSimHit_Totalenergy", &eeSimHit_Totalenergy);
 
    m_tree->Branch("esSimHit_energy", &esSimHit_energy);
@@ -3064,6 +3120,7 @@ void MonoNtupleDumper::clear()
   // Ecal RecHits
   m_ebhit_eta.clear();
   m_ebhit_phi.clear();
+  m_ebhit_id.clear();
   m_ebhit_time.clear();
   m_ebhit_energy.clear();
   m_ebhit_otEnergy.clear();
@@ -3074,6 +3131,8 @@ void MonoNtupleDumper::clear()
   m_ebhit_TotalEnergy.clear();
 
   m_eehit_eta.clear();
+  m_eehit_phi.clear();
+  m_eehit_id.clear();
   m_eehit_time.clear();
   m_eehit_energy.clear();
   m_eehit_kWeird.clear();
@@ -3152,6 +3211,9 @@ void MonoNtupleDumper::clear()
   ebSimHit_energyHad.clear();
   ebSimHit_time.clear();
   ebSimHit_id.clear();
+  ebSimHit_geantTrackId.clear();
+  ebSimHit_eta.clear();
+  ebSimHit_phi.clear();
   ebSimHit_Totalenergy.clear();
 
   eeSimHit_energy.clear();
@@ -3159,6 +3221,9 @@ void MonoNtupleDumper::clear()
   eeSimHit_energyHad.clear();
   eeSimHit_time.clear();
   eeSimHit_id.clear();
+  eeSimHit_geantTrackId.clear();
+  eeSimHit_eta.clear();
+  eeSimHit_phi.clear();
   eeSimHit_Totalenergy.clear();
  
   esSimHit_energy.clear();

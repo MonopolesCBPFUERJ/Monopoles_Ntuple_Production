@@ -566,6 +566,8 @@ private:
   // Ecal RecHits
   std::vector<double> m_ebhit_eta;
   std::vector<double> m_ebhit_phi;
+  std::vector<double> m_ebhit_ieta;
+  std::vector<double> m_ebhit_iphi;
   std::vector<double> m_ebhit_id;
   std::vector<double> m_ebhit_time;
   std::vector<double> m_ebhit_energy;
@@ -665,7 +667,8 @@ private:
   std::vector<float> ebSimHit_phi;
   std::vector<float> ebSimHit_Totalenergy; 
   std::unordered_map<int, std::pair<float,float>> ebCellEtaPhiCache;
-
+  std::vector<float> ebSimHit_ieta;
+  std::vector<float> ebSimHit_iphi;
 
   std::vector<float> eeSimHit_energy;
   std::vector<float> eeSimHit_energyEM;
@@ -1277,8 +1280,25 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     ebSimHit_time.push_back(hit.time());
     ebSimHit_id.push_back(hit.id());
     ebSimHit_geantTrackId.push_back(hit.geantTrackId());
-
+    
     const uint32_t raw = hit.id();               // PCaloHit stores raw DetId
+    DetId detId(raw);
+
+    // Only EB
+    if (detId.det() != DetId::Ecal || detId.subdetId() != EcalBarrel) continue;
+     
+      EBDetId ebid(raw);
+
+    if (EBDetId::validDetId(ebid.ieta(), ebid.iphi())) {
+      EBDetId ebid(raw);
+      ebSimHit_ieta.push_back(ebid.ieta());   // [-85..-1,1..85], no 0
+      ebSimHit_iphi.push_back(ebid.iphi());   // [1..360]
+    } else {
+      // fill with a sentinel if something is off
+      ebSimHit_ieta.push_back(0);
+      ebSimHit_iphi.push_back(0);
+    }    
+
     auto it = ebCellEtaPhiCache.find(raw);
     if (it == ebCellEtaPhiCache.end()) {
       EBDetId id(raw);
@@ -1287,6 +1307,7 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
     }
     ebSimHit_eta.push_back(it->second.first);
     ebSimHit_phi.push_back(it->second.second);
+ 
 
     totalEnergyLoss_EB += hit.energy();
     totalEnergyLoss_ECAL += hit.energy();
@@ -1487,6 +1508,14 @@ void MonoNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 
     uint32_t rawId = (*itHit).id().rawId();
     m_ebhit_id.push_back(rawId);
+
+    if (EBDetId::validDetId(detId.ieta(), detId.iphi())) {
+      m_ebhit_ieta.push_back(detId.ieta());   // [-85..-1, 1..85]
+      m_ebhit_iphi.push_back(detId.iphi());   // [1..360]
+    } else {
+      m_ebhit_ieta.push_back(0);  // sentinel if invalid
+      m_ebhit_iphi.push_back(0);
+    }
 
 
     m_ebhit_eta.push_back( geom->getGeometry(detId)->getPosition().eta() );
@@ -2618,6 +2647,8 @@ MonoNtupleDumper::beginJob()
    if(_ClustHitOutput){
    m_tree->Branch("ebhit_eta",&m_ebhit_eta);
    m_tree->Branch("ebhit_phi",&m_ebhit_phi);
+   m_tree->Branch("ebhit_ieta",&m_ebhit_ieta);
+   m_tree->Branch("ebhit_iphi",&m_ebhit_iphi);
    m_tree->Branch("ebhit_id",&m_ebhit_id);
    m_tree->Branch("ebhit_time",&m_ebhit_time);
    m_tree->Branch("ebhit_E",&m_ebhit_energy);
@@ -2701,6 +2732,8 @@ MonoNtupleDumper::beginJob()
    m_tree->Branch("ebSimHit_time", &ebSimHit_time);
    m_tree->Branch("ebSimHit_eta", &ebSimHit_eta);
    m_tree->Branch("ebSimHit_phi", &ebSimHit_phi);
+   m_tree->Branch("ebSimHit_ieta", &ebSimHit_ieta);
+   m_tree->Branch("ebSimHit_iphi", &ebSimHit_iphi);
    m_tree->Branch("ebSimHit_id", &ebSimHit_id);
    m_tree->Branch("ebSimHit_geantTrackId", &ebSimHit_geantTrackId);
    m_tree->Branch("ebSimHit_Totalenergy", &ebSimHit_Totalenergy);
@@ -3120,6 +3153,8 @@ void MonoNtupleDumper::clear()
   // Ecal RecHits
   m_ebhit_eta.clear();
   m_ebhit_phi.clear();
+  m_ebhit_ieta.clear();
+  m_ebhit_iphi.clear();
   m_ebhit_id.clear();
   m_ebhit_time.clear();
   m_ebhit_energy.clear();
@@ -3214,6 +3249,8 @@ void MonoNtupleDumper::clear()
   ebSimHit_geantTrackId.clear();
   ebSimHit_eta.clear();
   ebSimHit_phi.clear();
+  ebSimHit_ieta.clear();
+  ebSimHit_iphi.clear(); 
   ebSimHit_Totalenergy.clear();
 
   eeSimHit_energy.clear();

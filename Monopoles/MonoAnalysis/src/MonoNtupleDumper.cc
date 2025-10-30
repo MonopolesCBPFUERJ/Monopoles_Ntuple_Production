@@ -24,6 +24,10 @@
 //
 // 2025: Thales included the Type-1 MET corrected via pat;
 // 2025: Added L1 functions
+// 2025: Thales included G4SimHits: Studies within ECAL and SIM groups
+//        EB, EE, Tracker, HCAL: Added per-event sums (also RecHits)
+//        detIDs: ieta and iphi 
+
 //
 // system include files
 #include <vector>

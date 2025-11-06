@@ -8,37 +8,37 @@ from WMCore.Configuration import Configuration
 import datetime
 import re
 
-# Defina o ano e o tipo de dados aqui
-year = '2017'            # Defina o ano aqui
-data_type = 'MC'       # Use 'DATA' para dados reais ou 'MC' para Monte Carlo
+# Year and data type definitions
+year = '2017'          
+data_type = 'MC'       # 'DATA' or 'MC'
 
 config = config()
 
 config.section_("General")
-config.General.workArea = '18MarMETcorrected_MM_{data_type}_{year}/{era}'.format(data_type=data_type, year=year, era='{era}')
+config.General.workArea = 'MM_{data_type}_{year}/{era}'.format(data_type=data_type, year=year, era='{era}')
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
 config.section_("JobType")
 config.JobType.pluginName = 'Analysis'
 
-# Ajuste o psetName conforme necessário para DATA ou MC
+# Cfg file for  DATA or MC
 if data_type == 'DATA':
     config.JobType.psetName = "ntuple_data2018ul_runPAT.py"
     #config.JobType.psetName = 'ntuple_mc_2018_forData_14Feb_cfg.py'
 elif data_type == 'MC':
     if year == '2016':
-        config.JobType.psetName = 'ntuple_mc_2016_cfg_METFilter.py'
+        config.JobType.psetName = 'ntuple_MC2016APVul_runPAT.py'
     elif year == '2016APV':
-        config.JobType.psetName = 'ntuple_mc_2016APV_cfg_METFilter.py'
+        config.JobType.psetName = 'ntuple_MC2016ul_runPAT.py'
     elif year == '2017':
         config.JobType.psetName = 'ntuple_MC2017ul_runPAT.py'
     elif year == '2018':
         config.JobType.psetName = 'ntuple_MC2018ul_runPAT.py'
     else:
-        raise ValueError("Ano inválido. Escolha '2016', '2016APV', '2017' ou '2018'.")
+        raise ValueError("Invalid year: '2016', '2016APV', '2017' or '2018'.")
 else:
-    raise ValueError("Tipo de dados inválido. Escolha 'DATA' ou 'MC'.")
+    raise ValueError("Invalid data type: 'DATA' or 'MC'.")
 
 
 config.JobType.outputFiles = ['output.root']
@@ -49,23 +49,21 @@ config.JobType.allowUndistributedCMSSW = True
 config.section_("Data")
 config.Data.inputDBS = 'global'
 
-# Ajuste o método de splitting e unidades por trabalho com base no tipo de dados
 if data_type == 'DATA':
     config.Data.splitting = 'LumiBased'
     config.Data.unitsPerJob = 13
 elif data_type == 'MC':
     config.Data.splitting = 'FileBased'
     config.Data.unitsPerJob = 1
-    #config.Data.totalUnits = 1000  # Descomente para limitar o número de arquivos processados
+    #config.Data.totalUnits = 1000  # Limit processing
 else:
-    raise ValueError("Tipo de dados inválido. Escolha 'DATA' ou 'MC'.")
+    raise ValueError("Invalid data type: 'DATA' or 'MC'.")
 
 config.Data.publication = True
 
 config.section_("Site")
 config.Site.storageSite = 'T3_CH_CERNBOX'
 
-# Lista de datasets para DATA e MC
 
 datasets_2016_MONO = [
     #'/SinglePhoton/Run2016F-EXOMONOPOLE-21Feb2020_UL2016-v1/USER',
@@ -287,7 +285,7 @@ datasets_MC_2018 = [
     ,"/Monopole_SpinZero_DrellYan_M-4500_TuneCP5_13TeV_madgraph-pythia8/RunIISummer20UL18RECO-106X_upgrade2018_realistic_v11_L1v1-v2/GEN-SIM-RECO"
 ]
 
-# Mapeamento entre o ano e os arquivos LumiMask
+# LumiMasks
 lumi_masks = {
     '2016': 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt',
     '2016APV': 'https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt',
@@ -306,7 +304,7 @@ if data_type == 'DATA':
     elif year == '2018':
         datasets = datasets_2018_MONO
     else:
-        raise ValueError("Ano inválido. Escolha 2016, 2016APV, 2017 ou 2018.")
+        raise ValueError("Invalid year: 2016, 2016APV, 2017 or 2018.")
     lumi_mask = lumi_masks[year]
 elif data_type == 'MC':
     if year == '2016':
@@ -318,34 +316,32 @@ elif data_type == 'MC':
     elif year == '2018':
         datasets = datasets_MC_2018
     else:
-        raise ValueError("Datasets MC não disponíveis para o ano selecionado.")
-    lumi_mask = None  # Não é necessário para MC
+        raise ValueError("MC not available")
+    lumi_mask = None
 else:
-    raise ValueError("Tipo de dados inválido. Escolha 'DATA' ou 'MC'.")
+    raise ValueError("Invalid data type: 'DATA' or 'MC'.")
 
-# Função para submeter a configuração CRAB
+# CRAB submit
 def submit(config):
     try:
         crabCommand("submit", config=config)
     except HTTPException as hte:
-        print("Falha ao submeter a tarefa: %s" % (hte.headers))
+        print("Fail to submit: %s" % (hte.headers))
     except ClientException as cle:
-        print("Falha ao submeter a tarefa: %s" % (cle))
+        print("Fail to submit: %s" % (cle))
 
-# Loop sobre os datasets
 for dataset in datasets:
-    # Extrair a era ou identificar o dataset
     if data_type == 'DATA':
         era_match = re.search(r'Run\d{4}[A-Z]', dataset)
         if not era_match:
-            raise ValueError("Era não encontrada no dataset: {}".format(dataset))
+            raise ValueError("ERA not found: {}".format(dataset))
         era = era_match.group(0)
     elif data_type == 'MC':
-        # Extrair o nome do dataset para identificação
+        # Dataset name
         dataset_name = dataset.split('/')[1]
         era = dataset_name
     else:
-        raise ValueError("Tipo de dados inválido. Escolha 'DATA' ou 'MC'.")
+        raise ValueError("Invalid data type: 'DATA' or 'MC'.")
 
     crab_config = Configuration()
     crab_config.section_("General")
@@ -373,12 +369,12 @@ for dataset in datasets:
     #crab_config.Data.totalUnits = config.Data.totalUnits
     crab_config.Data.publication = config.Data.publication
     crab_config.Data.outputDatasetTag = '{data_type}_{year}'.format(data_type=data_type, year=year)
-    crab_config.Data.outLFNDirBase = '/store/user/tmenezes/MM_METcorrected_{data_type}_{year}/{era}/'.format(data_type=data_type, year=year, era=era)
+    crab_config.Data.outLFNDirBase = '/store/user/tmenezes/MM_METcorrected_{data_type}_{year}/{era}/'.format(data_type=data_type, year=year, era=era) ## change for your LFN directory
 
     if data_type == 'DATA':
         crab_config.Data.lumiMask = lumi_mask
     elif data_type == 'MC':
-        pass  # Não precisa de lumiMask para MC
+        pass  
 
     crab_config.section_("Site")
     crab_config.Site.storageSite = config.Site.storageSite
